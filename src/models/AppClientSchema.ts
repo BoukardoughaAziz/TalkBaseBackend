@@ -1,7 +1,8 @@
 // schemas/chat-message.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import AppOS from './AppOS';
+import { AppAgent } from './AppAgentSchema';
 
 export type AppClientDocument = AppClient & Document;
 
@@ -9,6 +10,7 @@ export type AppClientDocument = AppClient & Document;
 export class AppClient {
   @Prop({ required: true })
   identifier: string;
+  
 
   @Prop({ required: false, enum: AppOS })
   os: AppOS;
@@ -18,6 +20,10 @@ export class AppClient {
 
   @Prop({ required: false })
   ipAddress: string;
+  @Prop({ type: Types.ObjectId, ref: 'AppAgent', required: false })
+  associatedAgent:  Types.ObjectId | AppAgent;
+ 
+
 }
 
 export const AppClientSchema = SchemaFactory.createForClass(AppClient);

@@ -13,7 +13,7 @@ export class ChatController {
   @Post()
   addMessage(@Query() incomingChatMessage: any): any {
     let chatMessage: ChatMessage = new ChatMessage();
-    chatMessage.appClientIdentifier = incomingChatMessage.id;
+    chatMessage.appClient = incomingChatMessage.appClient;
     chatMessage.chatDirection = incomingChatMessage.chatDirection;
     chatMessage.chatEvent = incomingChatMessage.chatEvent;
     this.chatService.create(chatMessage);
@@ -30,4 +30,5 @@ export class ChatController {
 
     return array;
   }
+
 }
