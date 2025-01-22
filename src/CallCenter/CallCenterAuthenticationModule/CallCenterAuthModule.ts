@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AuthController } from './auth.controller';
-import { AuthService } from 'src/services/AuthService';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+ 
+import { JwtModule } from '@nestjs/jwt';
 import { AppAgent, AppAgentSchema } from 'src/models/AppAgentSchema';
-import { JwtStrategy } from './JwtStrategy';
+ 
 import { ConfigService } from '@nestjs/config';
+import { CallCenterAuthService } from 'src/sharedservices/CallCenterAuthService';
+import { CallCenterAuthController } from './CallCenterAuthController';
  
   
 
@@ -18,7 +19,7 @@ import { ConfigService } from '@nestjs/config';
           signOptions: { expiresIn: '1h' },
         }),
   ],
-  controllers: [AuthController],
-  providers: [AuthService,JwtStrategy,ConfigService],
+  controllers: [CallCenterAuthController],
+  providers: [CallCenterAuthService,ConfigService],
 })
-export class AuthModule {}
+export class CallCenterAuthModule {}

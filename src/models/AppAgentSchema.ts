@@ -4,7 +4,7 @@ import { Document } from 'mongoose';
 
 export type AppAgentDocument = AppAgent & Document;
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection:"AppAgent" })
 export class AppAgent {
   _id: string;
   @Prop({ required: true })

@@ -1,9 +1,9 @@
-import { Controller, Post, Body } from '@nestjs/common';
-import { AuthService } from '../services/AuthService';
+import { Controller, Post, Body } from '@nestjs/common'; 
+import { CallCenterAuthService } from 'src/sharedservices/CallCenterAuthService';
 
-@Controller( 'auth')
-export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+@Controller( 'CallCenterAuthController')
+export class CallCenterAuthController {
+  constructor(private readonly authService: CallCenterAuthService) {}
 
   @Post('register')
   async register(@Body() body: { email: string; password: string }) {
