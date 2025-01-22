@@ -7,7 +7,7 @@ import { AppClient } from './AppClientSchema';
 
 export type ChatMessageDocument = ChatMessage & Document;
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection:"ChatMessage" })
 export class ChatMessage {
   @Prop({ required: true, enum: ChatEvent })
   chatEvent: ChatEvent; // User ID or username
@@ -17,8 +17,15 @@ export class ChatMessage {
 
   @Prop({ required: false })
   ipAddress: string;
-  @Prop({ type: Types.ObjectId, ref: 'AppClient', required: false })
-  appClient: Types.ObjectId | AppClient;
+  @Prop({ required: true })
+  appClient: AppClient;
+  @Prop({ required: false })
+  message:string
+  @Prop({ required: true })
+  identifier:string
+  @Prop({ required: true })
+  timestamp:Date
 }
 
 export const ChatMessageSchema = SchemaFactory.createForClass(ChatMessage);
+ 

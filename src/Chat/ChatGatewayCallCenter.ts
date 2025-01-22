@@ -1,5 +1,5 @@
 // src/app.gateway.ts
-import { Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   SubscribeMessage,
@@ -9,21 +9,21 @@ import {
   MessageBody,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-import { ChatService } from 'src/services/ChatService';
-
+import { Server, Socket } from 'socket.io';  
+import { ChatServiceCallCenter } from 'src/sharedservices/ChatServiceCallCenter';
 @WebSocketGateway({
   cors: { origin: '*' },
   transports: ['websocket', 'polling'],
   namespace: '/NwidgetBackend/sockjs/callCenter',
 })
-export class ChatGatewayWidget
+@Injectable()
+export class ChatGatewayCallCenter
   implements OnGatewayConnection, OnGatewayDisconnect
 {
-  private readonly logger = new Logger(ChatGatewayWidget.name);
+  private readonly logger = new Logger(ChatGatewayCallCenter.name);
   private readonly namespace: string;
 
-  constructor(private chatService: ChatService) {}
+  constructor(private chatService: ChatServiceCallCenter) {}
 
   @WebSocketServer()
   server: Server;

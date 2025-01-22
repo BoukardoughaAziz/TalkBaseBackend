@@ -1,5 +1,7 @@
 enum ChatEvent {
-    NewClientStartOpenChatWidget = "NewClientStartOpenChatWidget"
+    NewClientStartOpenChatWidget = "NewClientStartOpenChatWidget",
+    "MessageFromClientToAgent"="MessageFromClientToAgent",
+    "MessageFromAgentToClient"="MessageFromAgentToClient",
   }
   export default ChatEvent;
   
