@@ -29,6 +29,9 @@ export class AppClient {
 
   @Prop({ required: false })
   countryCode: string;
+  
+  @Prop({ type: Date, default: Date.now })
+  createdAt: Date;
 
   @Prop({ type: Types.ObjectId, ref: 'AppAgent', required: false })
   associatedAgent: Types.ObjectId | AppAgent;
