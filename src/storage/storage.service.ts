@@ -39,7 +39,7 @@ export class StorageService {
     }
   }
   totalLength(): number {
-    return this.localMap.values.length;
+    return this.localMap.size;
   }
 
   // Get method for both Redis and Map

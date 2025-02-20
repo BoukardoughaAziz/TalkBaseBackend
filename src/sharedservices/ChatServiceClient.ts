@@ -57,7 +57,7 @@ export class ChatServiceClient {
       this.chatGatewayCallCenter.server.emit(
         'UPDATE_TOTAL_NUMBER_OF_LIVE_CLIENTS',
         this.storageService.totalLength(),
-      );
+      ); 
     }
 
     const chatMessage = await SharedServicesUtil.saveChatMessage(
