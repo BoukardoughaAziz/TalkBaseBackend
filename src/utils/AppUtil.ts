@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import * as crypto from 'crypto';
  
 export default class AppUtil {
  

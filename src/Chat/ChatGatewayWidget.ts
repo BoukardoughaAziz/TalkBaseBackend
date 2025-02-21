@@ -48,4 +48,5 @@ export class ChatGatewayWidget
     let incomingChatMessage = null;
     this.chatServiceClient.addMessageFromClientToAgent(incomingChatMessage);
   }
+  
 }

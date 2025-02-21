@@ -5,13 +5,13 @@ import { ChatMessage, ChatMessageDocument } from '../models/ChatMessageSchema';
 import { AppClient, AppClientDocument } from 'src/models/AppClientSchema';
 import { AppClientService } from './AppClientService';
 import { v4 as uuidv4 } from 'uuid';
-import * as crypto from 'crypto';
 import AppUtil from 'src/utils/AppUtil';
 import ChatEvent from 'src/models/ChatEvent';
 import ChatDirection from 'src/models/ChatDirection';
 import { SharedServicesUtil } from './SharedServicesUtil';
 import { StorageService } from 'src/storage/storage.service';
 import { ChatGatewayCallCenter } from 'src/Chat/ChatGatewayCallCenter';
+import * as crypto from 'crypto';
 @Injectable()
 export class ChatServiceClient {
   constructor(

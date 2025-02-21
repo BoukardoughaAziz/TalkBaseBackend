@@ -7,7 +7,7 @@ import { LiveKitModule } from './LiveKit/LiveKitModule';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017/Nwidget'),//Nwidget?replicaSet=rs0
+    MongooseModule.forRoot('mongodb://127.0.0.1:27017/Nwidget'),//Nwidget?replicaSet=rs0
     CallCenterAuthModule,
     ChatModule, LiveKitModule
   ], 
