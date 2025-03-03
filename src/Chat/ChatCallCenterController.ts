@@ -23,17 +23,17 @@ export class ChatCallCenterController {
     console.log(ret)
     return ret;
   }
-  
+
    @Post('/addMessageFromAgentToClient')
     async addMessageFromAgentToClient(@Body() incomingChatMessage: any) {
       const chatMessage =
         await this.chatServiceCallCenter.addMessageFromAgentToClient(
           incomingChatMessage,
-        );
-     
+        ); 
+      
    
       this.chatGatewayWidget.server.emit(
-        'MESSAGE_FROM_AGENT_TO_CLIENT',
+        `MESSAGE_FROM_AGENT_TO_CLIENT_${incomingChatMessage.appClient.identifier}`,
         JSON.stringify(chatMessage),
       ); 
       this.logger.log(`Send message from Agent to Client : ${JSON.stringify(chatMessage)}`);

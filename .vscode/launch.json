@@ -5,7 +5,7 @@
       "type": "node",
       "request": "launch",
       "name": "Debug NestJS with Nodemon",
-      "runtimeExecutable": "npm",
+      "runtimeExecutable": "npm", 
       "runtimeArgs": ["run", "start:debug"],
       "sourceMaps": true,
       "cwd": "${workspaceFolder}",
