@@ -1,4 +1,4 @@
-import { Body, Controller, Logger, Post } from '@nestjs/common';
+import { Body, Controller, Logger, Post,Get, Query } from '@nestjs/common';
 import { StatService } from 'src/sharedservices/StatService';
 
 @Controller('api/stats')
@@ -8,6 +8,16 @@ export class StatController {
 
   @Post('/spendTimeOnPage')
   async spendTimeOnPage(@Body() statMessage: any) {
-    const chatMessage = await this.statService.spendTimeOnPage(statMessage);
+    console.log('Received tracking data:', statMessage); 
+    return await this.statService.spendTimeOnPage(statMessage);
   }
+  @Get('/getStatistics')
+  async getStatistics(
+    @Query('startDate') startDate: string,
+    @Query('endDate') endDate: string
+  ) {
+    this.logger.log(`Fetching statistics from ${startDate} to ${endDate}`);
+    return await this.statService.getStatistics(startDate, endDate);
+  }
+  
 }

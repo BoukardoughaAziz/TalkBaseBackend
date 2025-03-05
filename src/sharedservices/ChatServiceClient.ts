@@ -12,6 +12,7 @@ import { SharedServicesUtil } from './SharedServicesUtil';
 import { StorageService } from 'src/storage/storage.service';
 import { ChatGatewayCallCenter } from 'src/Chat/ChatGatewayCallCenter';
 import * as crypto from 'crypto';
+
 @Injectable()
 export class ChatServiceClient {
   constructor(
@@ -24,12 +25,12 @@ export class ChatServiceClient {
     private chatGatewayCallCenter: ChatGatewayCallCenter,
     @InjectConnection() private readonly connection: Connection,
   ) {}
+
+  // Map to track reserved clients (clientId -> agentId)
+  private reservations = new Map<string, string>();
+
   async addMessageFromClientToAgent(incomingChatMessage: any) {
-    /* const session = await this.connection.startSession();
-    session.startTransaction();
-*/
     let appClient: AppClient;
-    // try {
     if (incomingChatMessage.appClientIdentifier == null) {
       appClient = new AppClient();
       appClient.appOS = incomingChatMessage.appOS;
@@ -42,22 +43,21 @@ export class ChatServiceClient {
       appClient.org = incomingChatMessage.org;
       appClient.identifier = AppUtil.generateRandomString(20);
 
-      await this.appClientModel.create([appClient]); //{ session }
+      await this.appClientModel.create([appClient]);
     } else {
       let appClients: Array<AppClient> = await this.appClientService.find({
         identifier: incomingChatMessage.appClientIdentifier,
       });
       appClient = appClients.at(0);
     }
+
     console.log(ChatDirection[incomingChatMessage.chatDirection]);
-    if (
-      incomingChatMessage.chatEvent == ChatEvent.NewClientStartOpenChatWidget
-    ) { 
+    if (incomingChatMessage.chatEvent == ChatEvent.NewClientStartOpenChatWidget) {
       this.storageService.set(appClient.identifier, JSON.stringify(appClient));
       this.chatGatewayCallCenter.server.emit(
         'UPDATE_TOTAL_NUMBER_OF_LIVE_CLIENTS',
         this.storageService.totalLength(),
-      ); 
+      );
     }
 
     const chatMessage = await SharedServicesUtil.saveChatMessage(
@@ -66,14 +66,6 @@ export class ChatServiceClient {
       incomingChatMessage,
     );
 
-    /*   await session.commitTransaction();
-    } catch (error) {
-      // Rollback the transaction in case of an error
-      await session.abortTransaction();
-      throw error;
-    } finally {
-      session.endSession();
-    }*/
     return chatMessage;
   }
 
@@ -92,10 +84,10 @@ export class ChatServiceClient {
         'appClient.identifier': clientIdentifier,
         chatEvent: { $ne: 'NewClientStartOpenChatWidget' },
       })
-
       .exec();
     return chatMessages;
   }
+
   async create(cat: ChatMessage): Promise<ChatMessage> {
     const createdCat = new this.chatMessageModel(cat);
     return createdCat.save();
@@ -104,7 +96,41 @@ export class ChatServiceClient {
   async findAll(): Promise<ChatMessage[]> {
     return this.chatMessageModel.find().exec();
   }
+
   find(query: any): Promise<ChatMessage[]> {
     return this.chatMessageModel.find(query).sort({ updatedAt: 1 }).exec();
+  }
+
+  
+    // live clients including reservation status.
+  
+  async getLiveClients() {
+    const liveClients = await this.appClientModel.find().exec();
+    return liveClients.map(client => ({
+      id: client.identifier,
+      name: client.humanIdentifier || 'Unknown User',
+      isReserved: this.reservations.has(client.identifier),
+      reservedBy: this.reservations.get(client.identifier) || null
+    }));
+  }
+
+ 
+  async reserveClient(clientId: string, agentId: string) {
+    if (this.reservations.has(clientId)) {
+      return { status: 'error', message: 'Client already reserved' };
+    }
+
+    this.reservations.set(clientId, agentId);
+    this.chatGatewayCallCenter.server.emit('clientReserved', { clientId, agentId });
+
+    return { status: 'success', message: 'Client reserved successfully' };
+  }
+
+  
+  async releaseClient(clientId: string) {
+    this.reservations.delete(clientId);
+    this.chatGatewayCallCenter.server.emit('clientReleased', { clientId });
+
+    return { status: 'success', message: 'Client released successfully' };
   }
 }
