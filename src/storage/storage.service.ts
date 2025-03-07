@@ -24,13 +24,13 @@ export class StorageService {
   }
 
   // Method to decide whether to use Redis or Local Map
-  private getStorage(): 'redis' | 'map' {
+  private getStorageType(): 'redis' | 'map' {
     return process.env.USE_REDIS === 'true' ? 'redis' : 'map';
   }
 
   // Set method for both Redis and Map
   async set(key: string, value: string): Promise<void> {
-    const storage = this.getStorage();
+    const storage = this.getStorageType();
 
     if (storage === 'redis') {
       await this.redisClient.set(key, value);
@@ -44,7 +44,7 @@ export class StorageService {
 
   // Get method for both Redis and Map
   async get(key: string): Promise<string | null> {
-    const storage = this.getStorage();
+    const storage = this.getStorageType();
 
     if (storage === 'redis') {
       return await this.redisClient.get(key);
@@ -52,10 +52,18 @@ export class StorageService {
       return this.localMap.get(key) || null;
     }
   }
+  async getEntries() {
+    const storage = this.getStorageType();
 
+    if (storage === 'redis') {
+      return await this.redisClient;
+    } else {
+      return this.localMap;
+    }
+  }
   // Delete method for both Redis and Map
   async delete(key: string): Promise<void> {
-    const storage = this.getStorage();
+    const storage = this.getStorageType();
 
     if (storage === 'redis') {
       await this.redisClient.del(key);
@@ -66,7 +74,7 @@ export class StorageService {
 
   // Check if a key exists in either Redis or Map
   async exists(key: string): Promise<boolean> {
-    const storage = this.getStorage();
+    const storage = this.getStorageType();
 
     if (storage === 'redis') {
       const result = await this.redisClient.exists(key);

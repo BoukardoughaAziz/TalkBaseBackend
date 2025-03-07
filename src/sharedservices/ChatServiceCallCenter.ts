@@ -5,6 +5,7 @@ import { ChatMessage, ChatMessageDocument } from '../models/ChatMessageSchema';
 import { AppClient, AppClientDocument } from 'src/models/AppClientSchema';
 import { AppClientService } from './AppClientService';
 import { SharedServicesUtil } from './SharedServicesUtil';
+import { StorageService } from 'src/storage/storage.service';
 
 @Injectable()
 export class ChatServiceCallCenter {
@@ -13,7 +14,7 @@ export class ChatServiceCallCenter {
     private chatMessageModel: Model<ChatMessageDocument>,
     @InjectModel(AppClient.name)
     private appClientModel: Model<AppClientDocument>,
-    private appClientService: AppClientService,
+    private appClientService: AppClientService,private storageService:StorageService
   ) {}
 
   async addMessageFromAgentToClient(incomingChatMessage: any) {
@@ -27,6 +28,7 @@ export class ChatServiceCallCenter {
   async getCallCenterDashboard(
     callCenterAgentEmail: String,
   ): Promise<Map<any, any[]>> {
+    const zz=this.storageService.getEntries();
     const listOfClients =
       await this.appClientService.findUntreatedClientsAndAgentClients(
         callCenterAgentEmail,
