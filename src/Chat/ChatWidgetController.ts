@@ -14,7 +14,12 @@ export class ChatWidgetController {
     private readonly chatServiceClient: ChatServiceClient,
     private readonly appClientService: AppClientService,
   ) {}
-
+  @Post('/clientStartVideoCall')
+  async clientStartVideoCall(@Query('appClientId') appClientId: string) {
+  
+    this.chatGatewayCallCenter.server.emit('CLIENT_START_VIDEO_CALL', appClientId);
+    console.log('Client Start Video call ' + appClientId);
+  }
   @Post('/addMessageFromClientToAgent')
   async addMessageFromClientToAgent(@Body() incomingChatMessage: any) {
     const chatMessage = await this.chatServiceClient.addMessageFromClientToAgent(incomingChatMessage);
