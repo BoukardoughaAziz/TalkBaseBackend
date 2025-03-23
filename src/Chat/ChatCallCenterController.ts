@@ -26,6 +26,17 @@ export class ChatCallCenterController {
     console.log(ret);
     return ret;
   }
+  @Post('/agentStartVideoCall')
+  async agentStartVideoCall(
+    @Query('agentId') agentId: string,
+    @Query('appClientId') appClientId: string,
+  ) {
+    this.chatGatewayCallCenter.server.emit('AGENT_START_VIDEO_CALL', { 
+      agentId, 
+      appClientId 
+    });
+    console.log(`Agent ${agentId} started video call with client ${appClientId}`);
+  }
 
   @Post('/addMessageFromAgentToClient')
   async addMessageFromAgentToClient(@Body() incomingChatMessage: any) {
