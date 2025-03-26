@@ -14,7 +14,8 @@ export class ChatServiceCallCenter {
     private chatMessageModel: Model<ChatMessageDocument>,
     @InjectModel(AppClient.name)
     private appClientModel: Model<AppClientDocument>,
-    private appClientService: AppClientService,private storageService:StorageService
+    private appClientService: AppClientService,
+    private storageService: StorageService,
   ) {}
 
   async addMessageFromAgentToClient(incomingChatMessage: any) {
@@ -25,21 +26,17 @@ export class ChatServiceCallCenter {
     );
     return chatMessage;
   }
-  async getCallCenterDashboard(
-    callCenterAgentEmail: String,
-  ): Promise<Map<any, any[]>> {
-    const zz=this.storageService.getEntries();
-    const listOfClients =
-      await this.appClientService.findUntreatedClientsAndAgentClients(
-        callCenterAgentEmail,
-      );
-    let map: Map<any, any> = new Map();
-    for (var client of listOfClients) {
-      console.log(client.identifier);
-      const listOfMessages: Array<ChatMessage> = await this.chatMessageModel
-        .find({ 'appClient.identifier': client.identifier })
-        .exec();
-      map.set(client, listOfMessages);
+  async getCallCenterDashboard(callCenterAgentEmail: String) {
+    let map = new Map<any, any[]>();
+    const storageServiceEntries = this.storageService.getEntriesLocalMap();
+    for (const [key, value] of storageServiceEntries) {
+      const appClient: AppClient = JSON.parse(value);
+      if (appClient.associatedAgent == null)  {
+        const listOfMessages = await this.appClientService.getClientMessages(
+          appClient.identifier,
+        );
+        map.set(value, listOfMessages);
+      }
     }
     const serializedMap = Object.fromEntries(map);
     console.log(serializedMap);

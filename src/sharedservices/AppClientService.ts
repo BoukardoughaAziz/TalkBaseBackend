@@ -41,9 +41,13 @@ export class AppClientService {
   }
 
   //  Messages Sent by Clients
-  async getClientMessages(): Promise<number> {
+  async countClinetMessages(): Promise<number> {
     return this.chatMessageModel.countDocuments({ chatDirection: "FromClientToAgent" });
   }
+    //  Messages Sent by Clients
+    async getClientMessages(identifier:string)  {
+      return  this.chatMessageModel.find({ "appClient.identifier": identifier });
+   }
 
   //  Clients by OS
   async getClientsByOS(): Promise<{ os: string; count: number }[]> {

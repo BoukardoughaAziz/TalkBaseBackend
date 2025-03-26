@@ -52,14 +52,8 @@ export class StorageService {
       return this.localMap.get(key) || null;
     }
   }
-  async getEntries() {
-    const storage = this.getStorageType();
-
-    if (storage === 'redis') {
-      return await this.redisClient;
-    } else {
-      return this.localMap;
-    }
+  getEntriesLocalMap() {
+    return this.localMap;
   }
   // Delete method for both Redis and Map
   async delete(key: string): Promise<void> {

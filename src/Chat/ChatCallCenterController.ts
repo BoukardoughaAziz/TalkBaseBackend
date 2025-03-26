@@ -19,11 +19,13 @@ export class ChatCallCenterController {
   @Get('getCallCenterDashboard')
   async getCallCenterDashboard(
     @Query('callCenterAgentEmail') callCenterAgentEmail: string,
-  ): Promise<Map<AppClient, ChatMessage[]>> {
-    let ret = await this.chatServiceCallCenter.getCallCenterDashboard(
-      callCenterAgentEmail,
-    );
-    console.log(ret);
+  ) {
+    let ret =
+      await this.chatServiceCallCenter.getCallCenterDashboard(
+        callCenterAgentEmail,
+      );  
+    console.log('retttttttttttttttttttttt ' + ret);
+
     return ret;
   }
   @Post('/agentStartVideoCall')
@@ -31,11 +33,13 @@ export class ChatCallCenterController {
     @Query('agentId') agentId: string,
     @Query('appClientId') appClientId: string,
   ) {
-    this.chatGatewayCallCenter.server.emit('AGENT_START_VIDEO_CALL', { 
-      agentId, 
-      appClientId 
+    this.chatGatewayCallCenter.server.emit('AGENT_START_VIDEO_CALL', {
+      agentId,
+      appClientId,
     });
-    console.log(`Agent ${agentId} started video call with client ${appClientId}`);
+    console.log(
+      `Agent ${agentId} started video call with client ${appClientId}`,
+    );
   }
 
   @Post('/addMessageFromAgentToClient')
@@ -61,7 +65,6 @@ export class ChatCallCenterController {
     return { clients };
   }
 
- 
   @Post('/reserveClient')
   async reserveClient(@Body() body: { clientId: string; agentId: string }) {
     const response = await this.chatServiceClient.reserveClient(
@@ -79,7 +82,6 @@ export class ChatCallCenterController {
     return response;
   }
 
-  
   @Post('/releaseClient')
   async releaseClient(@Body() body: { clientId: string }) {
     const response = await this.chatServiceClient.releaseClient(body.clientId);
