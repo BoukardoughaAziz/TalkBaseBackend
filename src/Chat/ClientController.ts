@@ -8,7 +8,7 @@ export class ClientController {
   @Get('stats')
   async getStats() {
     const totalClients = await this.appClientService.getTotalClients();
-    const clientMessages = await this.appClientService.getClientMessages();
+    const clientMessages = await this.appClientService.countClinetMessages();
     const clientsByOS = await this.appClientService.getClientsByOS();
     const clientsByBrowser = await this.appClientService.getClientsByBrowser();
     const clientsByCountry = await this.appClientService.getClientsByCountry();

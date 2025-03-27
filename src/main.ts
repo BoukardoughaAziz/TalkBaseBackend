@@ -4,10 +4,19 @@ import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.int
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter } from '@nestjs/platform-fastify'; 
 import { AppModule } from './app-module';
+import { readFileSync } from 'fs';
  
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, new FastifyAdapter());
+  const httpsOptions = {
+    https: {
+      key: readFileSync('../certificate3/example.com+5-key.pem'),
+      cert: readFileSync('../certificate3/example.com+5.pem'),
+    },
+  };
+
+  const app = await NestFactory.create(AppModule, new FastifyAdapter(httpsOptions));
+  
   const corsOptions: CorsOptions = {
     origin: '*', // Allow only this origin
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -15,8 +24,10 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
     allowedHeaders: 'Content-Type,Authorization',
   };
+  
   app.setGlobalPrefix('NwidgetBackend');
   app.enableCors(corsOptions);
-  await app.listen(15000);
+  await app.listen(15000, '0.0.0.0');
 }
+
 bootstrap();

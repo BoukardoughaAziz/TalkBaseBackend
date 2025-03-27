@@ -5,7 +5,7 @@ import { AppClientService } from 'src/sharedservices/AppClientService';
 import { ChatServiceClient } from 'src/sharedservices/ChatServiceClient';
 import { ChatGatewayCallCenter } from './ChatGatewayCallCenter';
 
-@Controller('api/chat')
+@Controller('api/chat/widget')
 export class ChatWidgetController {
   private readonly logger = new Logger(ChatWidgetController.name);
 
@@ -14,12 +14,7 @@ export class ChatWidgetController {
     private readonly chatServiceClient: ChatServiceClient,
     private readonly appClientService: AppClientService,
   ) {}
-  @Post('/clientStartVideoCall')
-  async clientStartVideoCall(@Query('appClientId') appClientId: string) {
-  
-    this.chatGatewayCallCenter.server.emit('CLIENT_START_VIDEO_CALL', appClientId);
-    console.log('Client Start Video call ' + appClientId);
-  }
+
   @Post('/addMessageFromClientToAgent')
   async addMessageFromClientToAgent(@Body() incomingChatMessage: any) {
     const chatMessage = await this.chatServiceClient.addMessageFromClientToAgent(incomingChatMessage);
