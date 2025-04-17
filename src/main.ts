@@ -9,10 +9,10 @@ import { readFileSync } from 'fs';
 
 async function bootstrap() {
   const httpsOptions = {
-    https: {
-      key: readFileSync('../certificate3/example.com+5-key.pem'),
-      cert: readFileSync('../certificate3/example.com+5.pem'),
-    },
+    // https: {
+    //   key: readFileSync('../certificate3/example.com+5-key.pem'),
+    //   cert: readFileSync('../certificate3/example.com+5.pem'),
+    // },
   };
 
   const app = await NestFactory.create(AppModule, new FastifyAdapter(httpsOptions));
