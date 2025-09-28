@@ -4,10 +4,10 @@ import { SubscribeMessage, WebSocketGateway, OnGatewayConnection, OnGatewayDisco
 ConnectedSocket } from '@nestjs/websockets';
 import { Model } from 'mongoose';
 import { Server, Socket } from 'socket.io';
-import { ConversationService } from 'src/conversation/conversation.service';
-import { Conversation, ConversationDocument } from 'src/conversation/entities/conversation.entity';
-import { ChatMessage } from 'src/models/ChatMessageSchema';
-import { ChatServiceCallCenter } from 'src/sharedservices/ChatServiceCallCenter';
+import { ConversationService } from '../conversation/conversation.service';
+import { Conversation, ConversationDocument } from '../conversation/entities/conversation.entity';
+import { ChatMessage } from '../models/ChatMessageSchema';
+import { ChatServiceCallCenter } from '../sharedservices/ChatServiceCallCenter';
 
 @WebSocketGateway({
   cors: { origin: '*' },

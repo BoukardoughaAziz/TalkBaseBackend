@@ -2,18 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
 import { ChatMessage, ChatMessageDocument } from '../models/ChatMessageSchema';
-import { AppClient, AppClientDocument, AppClientSchema } from 'src/models/AppClientSchema';
+import { AppClient, AppClientDocument, AppClientSchema } from '../models/AppClientSchema';
 import { AppClientService } from './AppClientService';
 import { v4 as uuidv4 } from 'uuid';
-import AppUtil from 'src/utils/AppUtil';
-import ChatEvent from 'src/models/ChatEvent';
-import ChatDirection from 'src/models/ChatDirection';
+import AppUtil from '../utils/AppUtil';
+import ChatEvent from '../models/ChatEvent';
+import ChatDirection from '../models/ChatDirection';
 import { SharedServicesUtil } from './SharedServicesUtil';
-import { StorageService } from 'src/storage/storage.service';
-import { ChatGatewayCallCenter } from 'src/Chat/ChatGatewayCallCenter';
-import { UserDeviceInfo, UserDeviceInfoDocument } from 'src/models/UserDeviceInfo';
-import { AppAgent, AppAgentDocument } from 'src/models/AppAgentSchema';
-import { Conversation, ConversationDocument } from 'src/conversation/entities/conversation.entity';
+import { StorageService } from '../storage/storage.service';
+import { ChatGatewayCallCenter } from '../Chat/ChatGatewayCallCenter';
+import { UserDeviceInfo, UserDeviceInfoDocument } from '../models/UserDeviceInfo';
+import { AppAgent, AppAgentDocument } from '../models/AppAgentSchema';
+import { Conversation, ConversationDocument } from '../conversation/entities/conversation.entity';
 
 @Injectable()
 export class ChatServiceClient {

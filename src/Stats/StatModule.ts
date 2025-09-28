@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { StatService } from 'src/sharedservices/StatService';
+import { StatService } from '../sharedservices/StatService';
 import { StatController } from './StatController';
-import { AppStat, AppStatSchema } from 'src/models/AppStatSchema'; 
+import { AppStat, AppStatSchema } from '../models/AppStatSchema'; 
 
 @Module({
   imports: [

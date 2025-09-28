@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
-import { AppAgent, AppAgentSchema } from 'src/models/AppAgentSchema';
+import { AppAgent, AppAgentSchema } from '../../models/AppAgentSchema';
 import { ConfigService } from '@nestjs/config';
-import { CallCenterAuthService } from 'src/sharedservices/CallCenterAuthService';
+import { CallCenterAuthService } from '../../sharedservices/CallCenterAuthService';
 import { CallCenterAuthController } from './CallCenterAuthController';
-import { MailerService } from 'src/sharedservices/MailServices';
-import { GoogleStrategy } from 'src/sharedservices/o-auth/google.strategy';
+import { MailerService } from '../../sharedservices/MailServices';
+import { GoogleStrategy } from '../../sharedservices/o-auth/google.strategy';
 
 @Module({
   imports: [

@@ -13,15 +13,15 @@ ConnectedSocket,
 } from '@nestjs/websockets';
 import { Model } from 'mongoose';
 import { Server, Socket } from 'socket.io';
-import { Conversation, ConversationDocument } from 'src/conversation/entities/conversation.entity';
-import { AppAgent, AppAgentDocument } from 'src/models/AppAgentSchema';
-import { ChatMessage } from 'src/models/ChatMessageSchema';
-import { ChatServiceClient } from 'src/sharedservices/ChatServiceClient';
-import { StorageService } from 'src/storage/storage.service';
+import { Conversation, ConversationDocument } from '../conversation/entities/conversation.entity';
+import { AppAgent, AppAgentDocument } from '../models/AppAgentSchema';
+import { ChatMessage } from '../models/ChatMessageSchema';
+import { ChatServiceClient } from '../sharedservices/ChatServiceClient';
+import { StorageService } from '../storage/storage.service';
 import { BaseBuddyService } from './base-buddy/base-buddy.service';
-import { UserDeviceInfo } from 'src/models/UserDeviceInfo';
-import { AppClient, AppClientDocument } from 'src/models/AppClientSchema';
-import { ConversationService } from 'src/conversation/conversation.service';
+import { UserDeviceInfo } from '../models/UserDeviceInfo';
+import { AppClient, AppClientDocument } from '../models/AppClientSchema';
+import { ConversationService } from '../conversation/conversation.service';
 
 @WebSocketGateway({
   cors: { origin: '*' },

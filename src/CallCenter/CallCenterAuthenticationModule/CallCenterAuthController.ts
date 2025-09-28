@@ -8,8 +8,8 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common';
-import { CallCenterAuthService } from 'src/sharedservices/CallCenterAuthService';
-import { AgentType } from 'src/models/AppAgentSchema';
+import { CallCenterAuthService } from '../../sharedservices/CallCenterAuthService';
+import { AgentType } from '../../models/AppAgentSchema';
 import { Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 

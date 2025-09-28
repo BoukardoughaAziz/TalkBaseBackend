@@ -3,9 +3,9 @@ import { UpdateConversationDto } from './dto/update-conversation.dto';
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ChatMessage } from 'src/models/ChatMessageSchema';
+import { ChatMessage } from '../models/ChatMessageSchema';
 import { Conversation, ConversationDocument } from './entities/conversation.entity';
-import { AgentType, AppAgent, AppAgentDocument } from 'src/models/AppAgentSchema';
+import { AgentType, AppAgent, AppAgentDocument } from '../models/AppAgentSchema';
 
 @Injectable()
 export class ConversationService {

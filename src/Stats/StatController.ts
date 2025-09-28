@@ -1,5 +1,5 @@
 import { Body, Controller, Logger, Post,Get, Query } from '@nestjs/common';
-import { StatService } from 'src/sharedservices/StatService';
+import { StatService } from '../sharedservices/StatService';
 
 @Controller('api/stats')
 export class StatController {

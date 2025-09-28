@@ -2,24 +2,24 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { ConfigModule } from '@nestjs/config';
-import { AppClient, AppClientSchema } from 'src/models/AppClientSchema';
-import { ChatMessage, ChatMessageSchema } from 'src/models/ChatMessageSchema';
+import { AppClient, AppClientSchema } from '../models/AppClientSchema';
+import { ChatMessage, ChatMessageSchema } from '../models/ChatMessageSchema';
 
-import { RedisModule } from 'src/redis/redis.module';
-import { ConversationModule } from 'src/conversation/conversation.module'; // Import ConversationModule
-import { RedisService } from 'src/redis/redis.service';
-import { AppClientService } from 'src/sharedservices/AppClientService';
-import { ChatServiceCallCenter } from 'src/sharedservices/ChatServiceCallCenter';
-import { ChatServiceClient } from 'src/sharedservices/ChatServiceClient';
-import { StorageService } from 'src/storage/storage.service';
+import { RedisModule } from '../redis/redis.module';
+import { ConversationModule } from '../conversation/conversation.module'; // Import ConversationModule
+import { RedisService } from '../redis/redis.service';
+import { AppClientService } from '../sharedservices/AppClientService';
+import { ChatServiceCallCenter } from '../sharedservices/ChatServiceCallCenter';
+import { ChatServiceClient } from '../sharedservices/ChatServiceClient';
+import { StorageService } from '../storage/storage.service';
 import { ChatGatewayCallCenter } from './ChatGatewayCallCenter';
 import { ChatGatewayWidget } from './ChatGatewayWidget';
 import { ChatWidgetController } from './ChatWidgetController';
 import { ChatCallCenterController } from './ChatCallCenterController';
 import { ClientController } from './ClientController';
-import { ConversationSchema,ConversationDocument, Conversation } from 'src/conversation/entities/conversation.entity';
-import { UserDeviceInfo, UserDeviceInfoSchema } from 'src/models/UserDeviceInfo';
-import { ConversationService } from 'src/conversation/conversation.service';
+import { ConversationSchema,ConversationDocument, Conversation } from '../conversation/entities/conversation.entity';
+import { UserDeviceInfo, UserDeviceInfoSchema } from '../models/UserDeviceInfo';
+import { ConversationService } from '../conversation/conversation.service';
 
 @Module({
   imports: [

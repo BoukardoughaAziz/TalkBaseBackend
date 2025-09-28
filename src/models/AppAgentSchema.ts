@@ -1,7 +1,7 @@
 // schemas/chat-message.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { Conversation } from 'src/conversation/entities/conversation.entity';
+import { Conversation } from '../conversation/entities/conversation.entity';
 
 export type AppAgentDocument = AppAgent & Document;
 

@@ -1,6 +1,6 @@
-import ChatDirection from 'src/models/ChatDirection';
-import ChatEvent from 'src/models/ChatEvent';
-import { ChatMessage } from 'src/models/ChatMessageSchema';
+import ChatDirection from '../models/ChatDirection';
+import ChatEvent from '../models/ChatEvent';
+import { ChatMessage } from '../models/ChatMessageSchema';
 import { v4 as uuidv4 } from 'uuid';
 export class SharedServicesUtil {
   public static async saveChatMessage(

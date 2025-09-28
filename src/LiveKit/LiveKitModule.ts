@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
  
-import { VideoService } from 'src/sharedservices/VideoService';
+import { VideoService } from '../sharedservices/VideoService';
 import { LiveKitController } from './LiveKitController';
  
 

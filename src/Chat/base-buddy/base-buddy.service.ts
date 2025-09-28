@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { GoogleGenAI } from '@google/genai';
 import { InjectModel } from '@nestjs/mongoose';
-import { Conversation, ConversationDocument } from 'src/conversation/entities/conversation.entity';
+import { Conversation, ConversationDocument } from '../../conversation/entities/conversation.entity';
 import { Model } from 'mongoose';
-import { ChatMessage, ChatMessageDocument } from 'src/models/ChatMessageSchema';
-import ChatEvent from 'src/models/ChatEvent';
-import { AppClient, AppClientDocument } from 'src/models/AppClientSchema';
+import { ChatMessage, ChatMessageDocument } from '../../models/ChatMessageSchema';
+import ChatEvent from '../../models/ChatEvent';
+import { AppClient, AppClientDocument } from '../../models/AppClientSchema';
 import { WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { ClientInformation } from 'src/client-information/entities/client-information.entity';
-import { ClientInformationDocument } from 'src/models/ClientInformationSchema';
+import { ClientInformation } from '../../client-information/entities/client-information.entity';
+import { ClientInformationDocument } from '../../models/ClientInformationSchema';
 import { ChatGatewayCallCenter } from '../ChatGatewayCallCenter';
 import { ChatGatewayWidget } from '../ChatGatewayWidget';
 

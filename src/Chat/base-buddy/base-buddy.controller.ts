@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { BaseBuddyService } from './base-buddy.service';
-import { ChatMessage } from 'src/models/ChatMessageSchema';
+import { ChatMessage } from '../../models/ChatMessageSchema';
 
 @Controller('base-buddy')
 export class BaseBuddyController {

@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Logger, Post, Query } from '@nestjs/common';
-import { AppClient } from 'src/models/AppClientSchema';
-import { ChatMessage } from 'src/models/ChatMessageSchema';
-import { AppClientService } from 'src/sharedservices/AppClientService';
-import { ChatServiceClient } from 'src/sharedservices/ChatServiceClient';
+import { AppClient } from '../models/AppClientSchema';
+import { ChatMessage } from '../models/ChatMessageSchema';
+import { AppClientService } from '../sharedservices/AppClientService';
+import { ChatServiceClient } from '../sharedservices/ChatServiceClient';
 import { ChatGatewayCallCenter } from './ChatGatewayCallCenter';
-import { UserDeviceInfo } from 'src/models/UserDeviceInfo';
+import { UserDeviceInfo } from '../models/UserDeviceInfo';
 import { Req } from '@nestjs/common';
 import { Request } from 'express';
 

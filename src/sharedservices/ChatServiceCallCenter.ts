@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ChatMessage, ChatMessageDocument } from '../models/ChatMessageSchema';
-import { AppClient, AppClientDocument } from 'src/models/AppClientSchema';
+import { AppClient, AppClientDocument } from '../models/AppClientSchema';
 import { AppClientService } from './AppClientService';
 import { SharedServicesUtil } from './SharedServicesUtil';
-import { StorageService } from 'src/storage/storage.service';
-import { Conversation, ConversationDocument } from 'src/conversation/entities/conversation.entity';
+import { StorageService } from '../storage/storage.service';
+import { Conversation, ConversationDocument } from '../conversation/entities/conversation.entity';
 
 @Injectable()
 export class ChatServiceCallCenter {

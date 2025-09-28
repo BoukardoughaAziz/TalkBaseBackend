@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { AppStat, AppStatDocument } from 'src/models/AppStatSchema';
+import { AppStat, AppStatDocument } from '../models/AppStatSchema';
 
 @Injectable()
 export class StatService {

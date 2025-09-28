@@ -1,6 +1,6 @@
 import { Body, Controller, Logger, Post } from '@nestjs/common';
 
-import { VideoService } from 'src/sharedservices/VideoService';
+import { VideoService } from '../sharedservices/VideoService';
 
 @Controller('api/livekit')
 export class LiveKitController {
