@@ -13,7 +13,7 @@ export class ClientInformationController {
   }
   @Get('find-client-by-identifier/:identifier')
   findByIdentifier(@Param('identifier') identifier: string) {
-    console.log("thisis the identifier",identifier) 
+    console.log("this is the identifier",identifier) 
     return this.clientInformationService.findByIdentifier(identifier);
   }
   @Get('find-all-clients')

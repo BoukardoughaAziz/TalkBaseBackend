@@ -4,6 +4,9 @@ import { ChatMessage } from 'src/models/ChatMessageSchema';
 import { AppClientService } from 'src/sharedservices/AppClientService';
 import { ChatServiceClient } from 'src/sharedservices/ChatServiceClient';
 import { ChatGatewayCallCenter } from './ChatGatewayCallCenter';
+import { UserDeviceInfo } from 'src/models/UserDeviceInfo';
+import { Req } from '@nestjs/common';
+import { Request } from 'express';
 
 @Controller('api/chat/widget')
 export class ChatWidgetController {
@@ -18,7 +21,6 @@ export class ChatWidgetController {
   @Post('/addMessageFromClientToAgent')
   async addMessageFromClientToAgent(@Body() incomingChatMessage: any) {
     const chatMessage = await this.chatServiceClient.addMessageFromClientToAgent(incomingChatMessage);
-    console.log(chatMessage.appClient.city);
     console.log(JSON.stringify(chatMessage));
     this.chatGatewayCallCenter.server.emit('MESSAGE_FROM_CLIENT_TO_AGENT', JSON.stringify(chatMessage));
     console.log('send MESSAGE_FROM_CLIENT_TO_AGENT ' + chatMessage);
@@ -32,10 +34,37 @@ export class ChatWidgetController {
     return { appClient: chatMessage.appClient, conversations: conversations };
   }
 
+  @Post('StartConversation')
+async StartConversation(
+  @Body('AppClient') AppClient: AppClient,
+  @Body('UserDeviceInfo') UserDeviceInfo: UserDeviceInfo,
+  @Body('isThisAnAiConversation') isThisAnAiConversation: boolean,
+  @Req() req: Request
+) {
+  console.log("=== REQUEST INFO ===");
+  console.log("Request URL:", req.url);
+  console.log("Request Origin:", req.get('Origin'));
+  console.log("Request Referer:", req.get('Referer'));
+  console.log("Client IP:", req.ip);
+  console.log("User-Agent:", req.get('User-Agent'));
+  console.log("===================");
+  
+  console.log("this is is the appclient", AppClient);
+  console.log("-------------------------------------------------------");
+  console.log("this is is the userdeviceinfo", UserDeviceInfo);
+  console.log("-------------------------------------------------------");
+  console.log("is this an ai conversation ?", isThisAnAiConversation);
+  const appclient = await this.chatServiceClient.StartConversation(AppClient, UserDeviceInfo, isThisAnAiConversation);
+  return appclient;
+}
+
   @Get('getConversations')
   async getConversations(@Query('callCenterAgentId') callCenterAgentId: string) {
     let array: Array<ChatMessage> = new Array();
     const chatConversations = await this.chatServiceClient.getConversations(callCenterAgentId);
     return chatConversations;
   }
+
+  
+
 }

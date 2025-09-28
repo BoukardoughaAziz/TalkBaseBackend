@@ -3,8 +3,9 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
-import { AppAgent, AppAgentDocument } from '../models/AppAgentSchema';
-import { AgentType } from '../models/AppAgentSchema';
+import { AppAgent, AppAgentDocument, AgentType } from '../models/AppAgentSchema';
+import { ConfigService } from '@nestjs/config';
+import { MailerService } from '../sharedservices/MailServices'; // Adjust path if needed
 
 @Injectable()
 export class CallCenterAuthService {
@@ -12,6 +13,8 @@ export class CallCenterAuthService {
     @InjectModel(AppAgent.name)
     private appAgentDocument: Model<AppAgentDocument>,
     private jwtService: JwtService,
+    private configService: ConfigService,
+    private readonly MailServices: MailerService
   ) {}
 
   async register(
@@ -20,78 +23,91 @@ export class CallCenterAuthService {
     firstname: string,
     lastname: string,
     type: AgentType = AgentType.AGENT
-  ): Promise<{}> {
-    // Check if trying to register as admin
-    if (type === AgentType.ADMIN) {
-      // Check if admin already exists
-      const existingAdmin = await this.appAgentDocument.findOne({ type: AgentType.ADMIN });
-      if (existingAdmin) {
-        throw new ConflictException('An admin account already exists');
-      }
-    }
+  ): Promise<{ message: string }> {
+    console.log("register service reached");
 
-    // Check if email already exists
     const existingUser = await this.appAgentDocument.findOne({ email });
     if (existingUser) {
       throw new ConflictException('Email already registered');
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    const SignUpPin = Math.floor(100000 + Math.random() * 900000);
+    console.log("SignUpPin: ", SignUpPin);
+
     const newUser = new this.appAgentDocument({
       email,
       password: hashedPassword,
       firstname,
       lastname,
       type,
-      isApproved: type === AgentType.ADMIN ? true : false, // Admin is automatically approved
+      isApproved: type === AgentType.ADMIN, 
+      emailPin : SignUpPin,
     });
+    console.log("New user created: ", newUser);
     await newUser.save();
 
-    const payload = { 
-      username: email,
-      type: type,
-      sub: newUser._id 
-    };
 
-    // Generate access token and refresh token
-    const accessToken = this.jwtService.sign(payload);
-    const refreshToken = this.jwtService.sign(payload, {
-      secret: process.env.JWT_REFRESH_TOKEN,
-      expiresIn: '7d',
-    });
 
-    return { 
-      accessToken, 
-      refreshToken,
-      type: type // Return type in response
-    };
+    await this.MailServices.sendEmail(
+      email,
+      'Welcome to Our Service',
+      `Hello ${firstname},\n\nThank you for registering. Your account has been created successfully.\n\nYour Sign-Up PIN is: ${SignUpPin}\n\nPlease keep it safe and do not share it with anyone.\n\nBest regards,\nYour Service Team`
+    );
+
+    return { message: 'Registration successful. Please login.' };
   }
 
   async validateUser(email: string, password: string): Promise<AppAgent> {
+    console.log("validateUser--- SERVICE")
     const user = await this.appAgentDocument.findOne({ email });
+    if(user){
+    console.log("User found ");
+    }
     if (!user) {
+      console.log("User not found ");
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    if (user.type === AgentType.AGENT && !user.isApproved) {
+    if (!user.isApproved) {
+      console.log("User is not approved: ", user);
       throw new UnauthorizedException('Your account is pending admin approval');
     }
 
-    if (await bcrypt.compare(password, user.password)) {
-      return user;
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      console.log("Password does not match");
+      throw new UnauthorizedException('Invalid email or password');
     }
-    
-    throw new UnauthorizedException('Invalid email or password');
+
+    return user;
   }
 
-  async login(user: AppAgent): Promise<{ accessToken: string, type: AgentType }> {
+  async login(user: AppAgent): Promise<{ accessToken: string; refreshToken: string; type: AgentType }> {
+    console.log("Received login request --- Service")
+    
     const payload = { 
       email: user.email, 
       sub: user._id,
       type: user.type 
     };
+
+    const accessToken = this.jwtService.sign(payload, {
+      secret: this.configService.get<string>('JWT_SECRET'),
+      expiresIn: this.configService.get<string>('JWT_EXPIRE'),
+    });
+
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: this.configService.get<string>('JWT_REFRESH_SECRET') || this.configService.get<string>('JWT_SECRET'),
+      expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRE') || '30d',
+    });
+    // console.log("Access Token: ", accessToken);
+    // console.log("Refresh Token: ", refreshToken);
+
     return {
-      accessToken: this.jwtService.sign(payload),
+      accessToken,
+      refreshToken,
       type: user.type
     };
   }
@@ -105,14 +121,12 @@ export class CallCenterAuthService {
       throw new UnauthorizedException('Cannot modify approval status of admin accounts');
     }
 
-    // Toggle current status
     agent.isApproved = !agent.isApproved;
     await agent.save();
 
     return agent;
   }
 
-  // Add method to get all agents
   async getAllAgents(): Promise<AppAgent[]> {
     return this.appAgentDocument.find({ type: AgentType.AGENT }).exec();
   }
@@ -124,4 +138,74 @@ export class CallCenterAuthService {
     }
     return user;
   }
+
+
+    async verifyEmail(email: string, emailPin: number): Promise<AppAgent> {
+      const user = await this.appAgentDocument.findOne({ email });
+      console.log("this is the user found: ", user);
+      const pin= Number(emailPin);
+      console.log("this is the type of the pin: ", typeof pin);
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+      if (user.emailPin !== Number(emailPin)) {
+        throw new UnauthorizedException('Invalid email verification PIN');
+      }
+      if(user.emailPin===pin){
+      user.emailVerified = true;
+      await user.save();
+      }
+      return user;
+    }
+
+
+    async finduserbyemail(email: string): Promise<AppAgent> {
+      const user = await this.appAgentDocument.findOne({ email });
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+      return user;
+    }
+
+
+    async updateemailVerificationStatus(userId: string, status: boolean): Promise<AppAgent> {
+      const user = await this.appAgentDocument.findById(userId);
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+      user.emailVerified = status;
+      await user.save();
+      return user;
+    }
+
+  async updateSocketId(agentId: string, socketId: string): Promise<AppAgent> {
+    console.log('Update socket ID request received -- Controller:', { agentId, socketId });
+    const user = await this.appAgentDocument.findById(agentId);
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+    user.SocketId = socketId;
+    await user.save();
+    return user;
+  }
+
+
+
+  //code for oauth 
+  async registerOAuth(email: string, firstname: string, lastname: string): Promise<AppAgent> {
+  const newUser = new this.appAgentDocument({
+    email,
+    firstname,
+    lastname,
+    password: '', // No password needed for OAuth
+    emailVerified: true,
+    isApproved: true,
+    type: AgentType.AGENT,
+  });
+
+  await newUser.save();
+  return newUser;
+}
+
+
 }

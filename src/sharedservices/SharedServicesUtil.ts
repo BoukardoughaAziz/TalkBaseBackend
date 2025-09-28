@@ -14,8 +14,7 @@ export class SharedServicesUtil {
       ChatDirection[incomingChatMessage.chatDirection];
     chatMessage.chatEvent = ChatEvent[incomingChatMessage.chatEvent];
     chatMessage.message = incomingChatMessage.message;
-    chatMessage.identifier = uuidv4();
-    chatMessage.timestamp = new Date();
+    chatMessage.senderId = uuidv4();
     await chatMessageModel.create([chatMessage]);
     return chatMessage;
   }

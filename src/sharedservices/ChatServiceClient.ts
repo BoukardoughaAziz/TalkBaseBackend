@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
 import { ChatMessage, ChatMessageDocument } from '../models/ChatMessageSchema';
-import { AppClient, AppClientDocument } from 'src/models/AppClientSchema';
+import { AppClient, AppClientDocument, AppClientSchema } from 'src/models/AppClientSchema';
 import { AppClientService } from './AppClientService';
 import { v4 as uuidv4 } from 'uuid';
 import AppUtil from 'src/utils/AppUtil';
@@ -11,7 +11,9 @@ import ChatDirection from 'src/models/ChatDirection';
 import { SharedServicesUtil } from './SharedServicesUtil';
 import { StorageService } from 'src/storage/storage.service';
 import { ChatGatewayCallCenter } from 'src/Chat/ChatGatewayCallCenter';
-import * as crypto from 'crypto';
+import { UserDeviceInfo, UserDeviceInfoDocument } from 'src/models/UserDeviceInfo';
+import { AppAgent, AppAgentDocument } from 'src/models/AppAgentSchema';
+import { Conversation, ConversationDocument } from 'src/conversation/entities/conversation.entity';
 
 @Injectable()
 export class ChatServiceClient {
@@ -20,6 +22,16 @@ export class ChatServiceClient {
     private chatMessageModel: Model<ChatMessageDocument>,
     @InjectModel(AppClient.name)
     private appClientModel: Model<AppClientDocument>,
+    @InjectModel(UserDeviceInfo.name) 
+    private UserDeviceInfo: Model<UserDeviceInfoDocument>,
+
+    @InjectModel(AppAgent.name) 
+    private AppAgent: Model<AppAgentDocument>,
+
+
+    @InjectModel(Conversation.name) 
+    private conversationModel: Model<ConversationDocument>,
+
     private appClientService: AppClientService,
     private storageService: StorageService,
     private chatGatewayCallCenter: ChatGatewayCallCenter,
@@ -30,17 +42,13 @@ export class ChatServiceClient {
   private reservations = new Map<string, string>();
 
   async addMessageFromClientToAgent(incomingChatMessage: any) {
+    console.log("addMessageFromClientToAgent Was Called");
     let appClient: AppClient;
     if (incomingChatMessage.appClientIdentifier == null) {
       appClient = new AppClient();
-      appClient.appOS = incomingChatMessage.appOS;
-      appClient.appBrowser = incomingChatMessage.appBrowser;
       appClient.identifier = uuidv4();
       appClient.humanIdentifier = 'user_' + AppUtil.getRandomInt();
       appClient.ipAddress = incomingChatMessage.ipAddress;
-      appClient.countryCode = incomingChatMessage.countryCode;
-      appClient.city = incomingChatMessage.city;
-      appClient.org = incomingChatMessage.org;
       appClient.identifier = AppUtil.generateRandomString(20);
 
       await this.appClientModel.create([appClient]);
@@ -68,6 +76,82 @@ export class ChatServiceClient {
 
     return chatMessage;
   }
+
+
+async StartConversation(AppClient: AppClient, UserDeviceInfo: UserDeviceInfo, isThisAnAiConversation: boolean): Promise<Conversation> {
+  let appclient = new this.appClientModel();
+  let NewConversation = new this.conversationModel();
+  let appagent = new this.AppAgent();
+  let UDI = new this.UserDeviceInfo();
+
+  // Find agent with least number of conversations using aggregation
+  const agentResult = await this.AppAgent.aggregate([
+    {
+      $addFields: {
+        conversationCount: { $size: { $ifNull: ['$Conversations', []] } }
+      }
+    },
+    {
+      $sort: { conversationCount: 1 }
+    },
+    {
+      $limit: 1
+    }
+  ]);
+  
+  if (!agentResult || agentResult.length === 0) {
+    console.log("no agent was found");
+    throw new Error('No available agent found');
+  }
+  
+  // Get the actual Mongoose document using the _id from aggregation result
+  appagent = await this.AppAgent.findById(agentResult[0]._id);
+
+  if (!appagent) {
+    throw new Error('Agent not found');
+  }
+
+  appclient.humanIdentifier = 'user_' + AppUtil.getRandomInt();
+  appclient.identifier = uuidv4();
+  appclient.ipAddress = AppClient.ipAddress;
+  appclient.country = AppClient.country;
+  appclient.associatedAgent = appagent; 
+
+  NewConversation.AppAgentID = appagent._id;
+  NewConversation.AppAgentName = appagent.firstname + " " + appagent.lastname;
+  NewConversation.AppClientID = appclient.humanIdentifier;
+  NewConversation.isHandledBy_BB = isThisAnAiConversation;
+
+  UDI.userIdentifier = appclient.identifier;
+  UDI.appBrowser = UserDeviceInfo.appBrowser;
+  UDI.appOs = UserDeviceInfo.appOs;
+  UDI.cpuCores = UserDeviceInfo.cpuCores;
+  UDI.deviceMemoryGB = UserDeviceInfo.deviceMemoryGB;
+  UDI.screenWidth = UserDeviceInfo.screenWidth;
+  UDI.screenHeight = UserDeviceInfo.screenHeight;
+  UDI.pixelRatio = UserDeviceInfo.pixelRatio;
+  UDI.language = UserDeviceInfo.language;
+  UDI.timezone = UserDeviceInfo.timezone;
+  UDI.connectionType = UserDeviceInfo.connectionType;
+
+  // Save the conversation first
+  await NewConversation.save();
+
+  // Add conversation to agent and save
+  appagent.ConversationsIDs.push(NewConversation._id);
+  // console.log("this is the agent that will be handling the conversation", appagent);
+  console.log("----------------------------------------");
+  // console.log("this is his conversationsIDs ", appagent.ConversationsIDs);
+
+  // Save all documents
+  await appclient.save();
+  await appagent.save();
+  await UDI.save();
+
+  console.log("this is the appclient : ", appclient);
+
+  return NewConversation; // This now returns AppClientDocument
+}
 
   async getNonTreatedClient() {
     let listOfNonTreatedClients = await this.appClientModel
@@ -133,4 +217,6 @@ export class ChatServiceClient {
 
     return { status: 'success', message: 'Client released successfully' };
   }
+
+
 }

@@ -6,6 +6,7 @@ import { AppClient, AppClientDocument } from 'src/models/AppClientSchema';
 import { AppClientService } from './AppClientService';
 import { SharedServicesUtil } from './SharedServicesUtil';
 import { StorageService } from 'src/storage/storage.service';
+import { Conversation, ConversationDocument } from 'src/conversation/entities/conversation.entity';
 
 @Injectable()
 export class ChatServiceCallCenter {
@@ -14,17 +15,35 @@ export class ChatServiceCallCenter {
     private chatMessageModel: Model<ChatMessageDocument>,
     @InjectModel(AppClient.name)
     private appClientModel: Model<AppClientDocument>,
+    @InjectModel(Conversation.name) 
+    private conversationModel: Model<ConversationDocument>,
+    
     private appClientService: AppClientService,
     private storageService: StorageService,
   ) {}
 
-  async addMessageFromAgentToClient(incomingChatMessage: any) {
-    const chatMessage = await SharedServicesUtil.saveChatMessage(
-      this.chatMessageModel,
-      incomingChatMessage.appClient,
-      incomingChatMessage,
-    );
-    return chatMessage;
+  async addMessageFromAgentToClient(incomingChatMessage: ChatMessage) {
+    console.log('-------------------------------------------------------------')
+    console.log('-------------------------------------------------------------')
+    console.log("add Message From Agent To Client Service was called " )
+    console.log("this is the meesage : "+incomingChatMessage.message )
+    console.log('-------------------------------------------------------------')
+    console.log('-------------------------------------------------------------')
+
+    const conversation = await this.conversationModel.findOne({ AppClientID: incomingChatMessage.conversationId }).exec();
+    if (!conversation) {
+        const newConversation = new this.conversationModel({                
+            messages: [incomingChatMessage],
+            AppClientID:incomingChatMessage.appClient.humanIdentifier,
+        })
+         newConversation.save();
+         return incomingChatMessage;
+
+    }else{
+    conversation.messages.push(incomingChatMessage);
+     conversation.save();
+     return incomingChatMessage;
+    }
   }
   async getCallCenterDashboard(callCenterAgentEmail: String) {
     let map = new Map<any, any[]>();
@@ -49,8 +68,6 @@ export class ChatServiceCallCenter {
     chatMessage.chatEvent = incomingChatMessage.chatEvent;
     this.create(chatMessage);
     let appClient: AppClient = new AppClient();
-    appClient.appOS = incomingChatMessage.appOS;
-    appClient.appBrowser = incomingChatMessage.appBrowser;
     appClient.identifier = incomingChatMessage.identifier;
     appClient.ipAddress = incomingChatMessage.ipAddress;
     this.appClientService.create(appClient);

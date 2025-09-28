@@ -5,6 +5,8 @@ import { AppAgent, AppAgentSchema } from 'src/models/AppAgentSchema';
 import { ConfigService } from '@nestjs/config';
 import { CallCenterAuthService } from 'src/sharedservices/CallCenterAuthService';
 import { CallCenterAuthController } from './CallCenterAuthController';
+import { MailerService } from 'src/sharedservices/MailServices';
+import { GoogleStrategy } from 'src/sharedservices/o-auth/google.strategy';
 
 @Module({
   imports: [
@@ -16,6 +18,6 @@ import { CallCenterAuthController } from './CallCenterAuthController';
         }),
   ],
   controllers: [CallCenterAuthController],
-  providers: [CallCenterAuthService, ConfigService],
+  providers: [CallCenterAuthService, ConfigService, MailerService,GoogleStrategy],
 })
 export class CallCenterAuthModule {}

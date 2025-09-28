@@ -6,6 +6,7 @@ import { AppClient, AppClientSchema } from 'src/models/AppClientSchema';
 import { ChatMessage, ChatMessageSchema } from 'src/models/ChatMessageSchema';
 
 import { RedisModule } from 'src/redis/redis.module';
+import { ConversationModule } from 'src/conversation/conversation.module'; // Import ConversationModule
 import { RedisService } from 'src/redis/redis.service';
 import { AppClientService } from 'src/sharedservices/AppClientService';
 import { ChatServiceCallCenter } from 'src/sharedservices/ChatServiceCallCenter';
@@ -16,16 +17,22 @@ import { ChatGatewayWidget } from './ChatGatewayWidget';
 import { ChatWidgetController } from './ChatWidgetController';
 import { ChatCallCenterController } from './ChatCallCenterController';
 import { ClientController } from './ClientController';
+import { ConversationSchema,ConversationDocument, Conversation } from 'src/conversation/entities/conversation.entity';
+import { UserDeviceInfo, UserDeviceInfoSchema } from 'src/models/UserDeviceInfo';
+import { ConversationService } from 'src/conversation/conversation.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     RedisModule,
+    ConversationModule, 
     MongooseModule.forFeature([
       { name: AppClient.name, schema: AppClientSchema },
       { name: ChatMessage.name, schema: ChatMessageSchema },
+      { name: Conversation.name, schema: ConversationSchema },
+      { name: UserDeviceInfo.name, schema: UserDeviceInfoSchema }
     ]),
-  ], // Ensure this line is correct
+  ], 
   providers: [
     AppClientService,
     ChatGatewayWidget,
@@ -34,12 +41,13 @@ import { ClientController } from './ClientController';
     StorageService,
     RedisService,
     ChatGatewayCallCenter,
+    ConversationService
   ],
   controllers: [
     ChatWidgetController,
     ChatCallCenterController,
     ClientController,
   ],
-  exports: [], // Exporting the service if you want to use it in other modules
+  exports: [],
 })
 export class ChatModule {}

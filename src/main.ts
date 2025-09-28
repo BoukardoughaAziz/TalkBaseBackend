@@ -15,16 +15,26 @@ async function bootstrap() {
     // },
   };
 
-  const app = await NestFactory.create(AppModule, new FastifyAdapter(httpsOptions));
+    const app = await NestFactory.create(AppModule); // this defaults to Express
   
-  const corsOptions: CorsOptions = {
+    // const corsOptions: CorsOptions = {
+    //   origin: ['http://192.168.0.106:55555','http://localhost:55555','http://localhost:5173','https://courageous-druid-d2f376.netlify.app','talkbase-widget.umd.js:40','*'], // ← Your frontend's IP + port
+    //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    //   credentials: true,
+    //   optionsSuccessStatus: 204,
+    //   allowedHeaders: 'Content-Type,Authorization',
+    // };
+
+
+  //old one doesn't work when credientials are true the origin cannot be *:  
+    const corsOptions: CorsOptions = {
     origin: '*', // Allow only this origin
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // Enable if you need to handle cookies
     optionsSuccessStatus: 204,
     allowedHeaders: 'Content-Type,Authorization',
   };
-  
+
   app.setGlobalPrefix('NwidgetBackend');
   app.enableCors(corsOptions);
   await app.listen(15000, '0.0.0.0');

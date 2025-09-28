@@ -1,10 +1,10 @@
-import { Body, Controller, Get, Logger, Post, Query } from '@nestjs/common';
-import { AppClient } from 'src/models/AppClientSchema';
-import { ChatMessage } from 'src/models/ChatMessageSchema';
+import { Body, Controller, Get, Logger, Param, Post, Query } from '@nestjs/common';
 import { ChatServiceClient } from 'src/sharedservices/ChatServiceClient';
 import { ChatServiceCallCenter } from 'src/sharedservices/ChatServiceCallCenter';
 import { ChatGatewayWidget } from './ChatGatewayWidget';
 import { ChatGatewayCallCenter } from 'src/Chat/ChatGatewayCallCenter';
+import { ChatMessage } from 'src/models/ChatMessageSchema';
+import { ConversationService } from 'src/conversation/conversation.service';
 
 @Controller('api/chat/callcenter')
 export class ChatCallCenterController {
@@ -14,6 +14,7 @@ export class ChatCallCenterController {
     private readonly chatServiceClient: ChatServiceClient,
     private readonly chatGatewayWidget: ChatGatewayWidget,
     private readonly chatGatewayCallCenter: ChatGatewayCallCenter,
+    // private readonly conversationService: ConversationService,
   ) {}
 
   @Get('getCallCenterDashboard')
@@ -43,14 +44,14 @@ export class ChatCallCenterController {
   }
 
   @Post('/addMessageFromAgentToClient')
-  async addMessageFromAgentToClient(@Body() incomingChatMessage: any) {
+  async addMessageFromAgentToClient(@Body() incomingChatMessage: ChatMessage) {
     const chatMessage =
       await this.chatServiceCallCenter.addMessageFromAgentToClient(
         incomingChatMessage,
       );
 
     this.chatGatewayWidget.server.emit(
-      `MESSAGE_FROM_AGENT_TO_CLIENT_${incomingChatMessage.appClient.identifier}`,
+      `MESSAGE_FROM_AGENT_TO_CLIENT_${incomingChatMessage.conversationId}`,
       JSON.stringify(chatMessage),
     );
     this.logger.log(
