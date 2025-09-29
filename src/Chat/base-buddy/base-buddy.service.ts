@@ -12,7 +12,7 @@ import { ClientInformation } from '../../client-information/entities/client-info
 import { ClientInformationDocument } from '../../models/ClientInformationSchema';
 import { ChatGatewayCallCenter } from '../ChatGatewayCallCenter';
 import { ChatGatewayWidget } from '../ChatGatewayWidget';
-import { AgentType, AppAgent, AppAgentDocument } from 'src/models/AppAgentSchema';
+import { AgentType, AppAgent, AppAgentDocument } from '../../models/AppAgentSchema';
 
 @Injectable()
 export class BaseBuddyService {
