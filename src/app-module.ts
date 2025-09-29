@@ -11,7 +11,7 @@ import { BaseBuddyModule } from './Chat/base-buddy/base-buddy.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb+srv://azizboukardougha:7OVW2R4flTAqHtKF@cluster0.ojgrhfb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'),//Nwidget?replicaSet=rs0
+    MongooseModule.forRoot('mongodb+srv://azizboukardougha:7OVW2R4flTAqHtKF%28@cluster0.ojgrhfb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'),//Nwidget?replicaSet=rs0
     CallCenterAuthModule,
     ChatModule, LiveKitModule,StatModule, ClientInformationModule,ConversationModule,BaseBuddyModule
   ], 
