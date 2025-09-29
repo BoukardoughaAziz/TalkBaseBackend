@@ -14,6 +14,7 @@ import { ChatGatewayCallCenter } from '../ChatGatewayCallCenter';
 import { ChatGatewayWidget } from '../ChatGatewayWidget';
 import { AgentType, AppAgent, AppAgentDocument } from '../../models/AppAgentSchema';
 
+
 @Injectable()
 export class BaseBuddyService {
       private ai: GoogleGenAI;
