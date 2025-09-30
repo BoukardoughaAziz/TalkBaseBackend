@@ -150,7 +150,7 @@ When responding, always keep the user's context and product details in mind, and
 
     const conversation = await this.conversationModel.findOne({ AppClientID: chatMessage.appClient.humanIdentifier }).exec();
     if (!conversation) {
-    console.log("the conversation was not found ")
+    console.log("the conversation was not found ---BaseBuddy service ")
     const newConversation = new this.conversationModel({
     messages: [chatMessage],
     AppClientID:chatMessage.appClient.humanIdentifier,
@@ -158,7 +158,7 @@ When responding, always keep the user's context and product details in mind, and
     newConversation.save();
     return chatMessage;
     }else{
-    console.log("the conversation was found")
+    console.log("the conversation was found ---BaseBuddy service")
     conversation.messages.push(chatMessage);
     conversation.save();
     return chatMessage;

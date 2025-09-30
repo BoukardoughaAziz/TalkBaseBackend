@@ -50,6 +50,9 @@ private conversationModel: Model<ConversationDocument>,)
         console.log('-------------------------------------------------------------')                
         const conversation = await this.conversationModel.findOne({ AppClientID: chatMessage.conversationId }).exec();
         if (!conversation) {
+        const conversation = await this.conversationModel.findOne({ AppClientID: chatMessage.appClient.humanIdentifier }).exec();
+        }
+        if (!conversation) {
         console.log("the conversation was not found ")
         const newConversation = new this.conversationModel({
         messages: [chatMessage],
