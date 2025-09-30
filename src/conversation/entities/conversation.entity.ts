@@ -11,13 +11,13 @@ export class Conversation {
     @Prop({type: [{type: Types.ObjectId, ref: 'Message'}]})
     messages: ChatMessage[];
 
-    @Prop({ required: true })
+    @Prop({ required: false })
     AppClientID:string
 
-    @Prop({ required: true })
+    @Prop({ required: false })
     AppAgentID:string
 
-    @Prop({ required: true })
+    @Prop({ required: false })
     AppAgentName:string
 
     @Prop({ default: false })

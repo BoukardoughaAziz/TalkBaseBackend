@@ -12,8 +12,6 @@ import { ClientInformation } from '../../client-information/entities/client-info
 import { ClientInformationDocument } from '../../models/ClientInformationSchema';
 import { ChatGatewayCallCenter } from '../ChatGatewayCallCenter';
 import { ChatGatewayWidget } from '../ChatGatewayWidget';
-import { AgentType, AppAgent, AppAgentDocument } from '../../models/AppAgentSchema';
-
 
 @Injectable()
 export class BaseBuddyService {
@@ -24,7 +22,6 @@ export class BaseBuddyService {
         @InjectModel(ChatMessage.name) private chatMessageModel: Model<ChatMessageDocument>,
         @InjectModel(Conversation.name) private conversationModel: Model<ConversationDocument>,
         @InjectModel(AppClient.name) private appClientModel: Model<AppClientDocument>,
-        @InjectModel(AppAgent.name) private appAgentModel: Model<AppAgentDocument>,
   ) {
     this.ai = new GoogleGenAI({
       apiKey: process.env.GEMINI_API_KEY,
@@ -132,18 +129,6 @@ When responding, always keep the user's context and product details in mind, and
       config,
       contents,
     });
-    const BBAgentCred: AppAgent=new this.appAgentModel({
-      email: "",
-      password: "",
-      firstname: "Base",
-      lastname: "Buddy",
-      type:AgentType.AGENT,
-      isApproved: true,
-      emailVerified: true,
-      emailPin: 123456,
-      SocketId: "",
-      ConversationsIDs: [],
-    })
 
     let answer = '';
     for await (const chunk of response) {
@@ -156,7 +141,6 @@ When responding, always keep the user's context and product details in mind, and
       identifier: ConversationId,
       isSentBy_BB: true,
       appClient: appclient,
-      
     })
     console.log("this is the ai response", chatMessage.message);
     console.log("----------------------------------------------")
