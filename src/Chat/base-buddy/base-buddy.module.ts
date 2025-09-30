@@ -7,7 +7,7 @@ import { ChatMessage, ChatMessageSchema } from '../../models/ChatMessageSchema';
 import { AppClient, AppClientSchema } from '../../models/AppClientSchema';
 import { ClientInformation } from '../../models/ClientInformationSchema';
 import { ClientInformationSchema } from '../../client-information/schemas/client-information.schema';
-import { AppAgent, AppAgentSchema } from 'src/models/AppAgentSchema';
+import { AppAgent, AppAgentSchema } from '../../models/AppAgentSchema';
 
 @Module({
   controllers: [BaseBuddyController],
