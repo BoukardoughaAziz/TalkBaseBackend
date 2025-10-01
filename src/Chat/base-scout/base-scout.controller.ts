@@ -1,6 +1,6 @@
 import { BaseScoutService } from './base-scout.service';
 import { Body, Controller, Post } from '@nestjs/common';
-import { ChatMessage } from '../models/ChatMessageSchema';
+import { ChatMessage } from '../../models/ChatMessageSchema';
 
 @Controller('base-scout')
 export class BaseScoutController {
