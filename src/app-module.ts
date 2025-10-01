@@ -7,7 +7,7 @@ import { LiveKitModule } from './LiveKit/LiveKitModule';
  import { ClientInformationModule } from './client-information/client-information.module';
 import { ConversationModule } from './conversation/conversation.module';
 import { BaseBuddyModule } from './Chat/base-buddy/base-buddy.module';
-import {  } from './Chat/base-scout/base-scout.module';
+import {  BaseScoutModule } from './Chat/base-scout/base-scout.module';
  
 
 @Module({
