@@ -55,13 +55,11 @@ async login(
   // Set secure cookies
   res.cookie('access_token', loginResult.accessToken, {
     httpOnly: true,
-    secure: isProduction, // true in production for HTTPS
-    sameSite: isProduction ? 'none' : 'lax', // 'none' required for cross-site in production
+    secure: process.env.NODE_ENV === 'production', // true in prod, false locally
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     maxAge: 1000 * 60 * 60 * 24 * 7,
-    domain: isProduction ? '.render.com' : undefined, // Adjust based on your domain
     path: '/',
   });
-
   res.cookie('user', JSON.stringify({
     email: user.email,
     firstname: user.firstname,
@@ -69,11 +67,10 @@ async login(
     type: user.type,
     _id: user._id,
   }), {
-    httpOnly: false,
-    secure: isProduction,
-    sameSite: isProduction ? 'none' : 'lax',
+    httpOnly: false, 
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     maxAge: 1000 * 60 * 60 * 24 * 7,
-    domain: isProduction ? '.render.com' : undefined,
     path: '/',
   });
 
