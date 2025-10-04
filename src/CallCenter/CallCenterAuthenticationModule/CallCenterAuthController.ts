@@ -42,37 +42,52 @@ export class CallCenterAuthController {
     );
   }
 
-  @Post('login')
-  async login(
-    @Body() body: { email: string; password: string },
-    @Res({ passthrough: true }) res: Response
-  ) {
-    const user = await this.authService.validateUser(body.email, body.password);
-    const loginResult = await this.authService.login(user);
+@Post('login')
+async login(
+  @Body() body: { email: string; password: string },
+  @Res({ passthrough: true }) res: Response
+) {
+  const user = await this.authService.validateUser(body.email, body.password);
+  const loginResult = await this.authService.login(user);
 
-    // Set secure cookies
-    res.cookie('access_token', loginResult.accessToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      maxAge: 1000 * 60 * 60 * 24 * 7, 
-    });
+  const isProduction = process.env.NODE_ENV === 'production';
 
-    res.cookie('user', JSON.stringify({
+  // Set secure cookies
+  res.cookie('access_token', loginResult.accessToken, {
+    httpOnly: true,
+    secure: isProduction, // true in production for HTTPS
+    sameSite: isProduction ? 'none' : 'lax', // 'none' required for cross-site in production
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    domain: isProduction ? '.render.com' : undefined, // Adjust based on your domain
+    path: '/',
+  });
+
+  res.cookie('user', JSON.stringify({
+    email: user.email,
+    firstname: user.firstname,
+    lastname: user.lastname,
+    type: user.type,
+    _id: user._id,
+  }), {
+    httpOnly: false,
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    domain: isProduction ? '.render.com' : undefined,
+    path: '/',
+  });
+
+  return { 
+    message: 'Login successful',
+    user: {
       email: user.email,
       firstname: user.firstname,
       lastname: user.lastname,
       type: user.type,
       _id: user._id,
-    }), {
-      httpOnly: false, 
-      secure: false,
-      sameSite: 'lax',
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-    });
-
-    return { message: 'Login successful' };
-  }
+    }
+  };
+}
 
   @Post('toggle-agent-approval')
   async toggleAgentApproval(@Body() body: { agentId: string }) {
