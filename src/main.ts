@@ -17,7 +17,7 @@ async function bootstrap() {
 
     const app = await NestFactory.create(AppModule); // this defaults to Express
   
-    // const corsOptions: CorsOptions = {
+    const corsOptions: CorsOptions = {
       origin: ['http://192.168.0.106:55555','http://localhost:55555','http://localhost:5173','https://courageous-druid-d2f376.netlify.app','talkbase-widget.umd.js:40','https://timely-hamster-68076f.netlify.app'], // ← Your frontend's IP + port
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       credentials: true,
