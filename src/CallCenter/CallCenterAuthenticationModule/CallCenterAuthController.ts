@@ -55,24 +55,25 @@ async login(
   // Set secure cookies
   res.cookie('access_token', loginResult.accessToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // true in prod, false locally
+    secure: process.env.NODE_ENV === 'production', // only secure in prod
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    maxAge: 1000 * 60 * 60 * 24 * 7,
     path: '/',
+    maxAge: 1000 * 60 * 60 * 24 * 7, // ✅ 7 days
   });
   res.cookie('user', JSON.stringify({
-    email: user.email,
-    firstname: user.firstname,
-    lastname: user.lastname,
-    type: user.type,
-    _id: user._id,
-  }), {
-    httpOnly: false, 
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    maxAge: 1000 * 60 * 60 * 24 * 7,
-    path: '/',
-  });
+  email: user.email,
+  firstname: user.firstname,
+  lastname: user.lastname,
+  type: user.type,
+  _id: user._id,
+}), {
+  httpOnly: false,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  path: '/',
+  maxAge: 1000 * 60 * 60 * 24 * 7, // ✅ 7 days
+});
+
 
   return { 
     message: 'Login successful',
