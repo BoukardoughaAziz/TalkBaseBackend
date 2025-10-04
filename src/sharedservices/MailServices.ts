@@ -1,36 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import * as nodemailer from 'nodemailer';
+import * as SibApiV3Sdk from '@sendinblue/client';
 
 @Injectable()
 export class MailerService {
-  private transporter: nodemailer.Transporter;
+  private client: SibApiV3Sdk.TransactionalEmailsApi;
 
   constructor() {
-    this.transporter = nodemailer.createTransport({
-      host: 'smtp-relay.brevo.com',
-      port: 587, // 587 for STARTTLS, 465 for SSL
-      secure: false, // true if using port 465
-      auth: {
-        user: '988157001@smtp-brevo.com', // Brevo account email
-        pass: '61t3SEbaTcyhCY9M',          // Brevo SMTP password/key
-      },
-    });
+    this.client = new SibApiV3Sdk.TransactionalEmailsApi();
+    this.client.setApiKey(
+      SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey,
+      process.env.BREVO_API_KEY // store securely in env
+    );
   }
 
-  async sendEmail(to: string, subject: string, text: string): Promise<void> {
-    const message = {
-      from: '"TalkBase Team" talkbase.tb@gmail.com', // must be verified in Brevo
-      to,
-      subject,
-      text,
-    };
-
+  async sendEmail(to: string, subject: string, text: string) {
     try {
-      await this.transporter.sendMail(message);
-      console.log('E-mail envoyé avec succès');
+      await this.client.sendTransacEmail({
+        sender: { name: 'TalkBase Team', email: 'talkbase.tb@gmail.com' },
+        to: [{ email: to }],
+        subject,
+        textContent: text,
+      });
+      console.log('Email sent successfully via Brevo API');
     } catch (error) {
-      console.error('Erreur lors de l\'envoi de l\'e-mail', error);
-      throw new Error('Erreur lors de l\'envoi de l\'e-mail');
+      console.error('Erreur lors de l\'envoi de l\'email via API', error);
+      throw new Error('Erreur lors de l\'envoi de l\'email');
     }
   }
 }
