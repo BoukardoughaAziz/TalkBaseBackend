@@ -5,7 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 import { AppAgent, AppAgentDocument, AgentType } from '../models/AppAgentSchema';
 import { ConfigService } from '@nestjs/config';
-import { MailerService } from '../sharedservices/MailServices'; // Adjust path if needed
+import { MailerService } from '../sharedservices/MailServices'; 
 
 @Injectable()
 export class CallCenterAuthService {

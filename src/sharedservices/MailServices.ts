@@ -7,19 +7,19 @@ export class MailerService {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 587,
-    service:'gmail',
-      secure: false,
+      host: 'smtp-relay.brevo.com',
+      port: 587, // 587 for STARTTLS, 465 for SSL
+      secure: false, // true if using port 465
       auth: {
-        user: 'talkbase.tb@gmail.com', 
-        pass: 'pikd unan iurh yoiy',
+        user: '988157001@smtp-brevo.com', // Brevo account email
+        pass: '61t3SEbaTcyhCY9M',          // Brevo SMTP password/key
       },
     });
   }
 
   async sendEmail(to: string, subject: string, text: string): Promise<void> {
     const message = {
+      from: '"TalkBase Team" talkbase.tb@gmail.com', // must be verified in Brevo
       to,
       subject,
       text,
