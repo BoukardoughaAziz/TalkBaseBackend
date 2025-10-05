@@ -13,7 +13,9 @@ async function bootstrap() {
         'http://localhost:5173',
         'http://192.168.0.106:55555',
         'https://timely-hamster-68076f.netlify.app',
-        'https://talkbasebackend.onrender.com'
+        'https://talkbasebackend.onrender.com',
+        'https://68e21c8de7ed3887b7dacdc1--talkbase.netlify.app',
+        'https://talkbase.netlify.app/'
         // Add your Render backend URL if frontend needs to call it
       ];
 
