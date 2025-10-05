@@ -53,25 +53,20 @@ async login(
   const isProduction = process.env.NODE_ENV === 'production';
 
   // Set secure cookies
-  res.cookie('access_token', loginResult.accessToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // only secure in prod
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    path: '/',
-    maxAge: 1000 * 60 * 60 * 24 * 7, // ✅ 7 days
-  });
-  res.cookie('user', JSON.stringify({
-  email: user.email,
-  firstname: user.firstname,
-  lastname: user.lastname,
-  type: user.type,
-  _id: user._id,
-}), {
-  httpOnly: false,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+res.cookie('access_token', loginResult.accessToken, {
+  httpOnly: true,
+  secure: isProd,           // ✅ Must be true if SameSite=None
+  sameSite: isProd ? 'none' : 'lax',
   path: '/',
-  maxAge: 1000 * 60 * 60 * 24 * 7, // ✅ 7 days
+  maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+});
+
+res.cookie('user', JSON.stringify(user), {
+  httpOnly: false,
+  secure: isProd,
+  sameSite: isProd ? 'none' : 'lax',
+  path: '/',
+  maxAge: 1000 * 60 * 60 * 24 * 7,
 });
 
 
