@@ -50,23 +50,28 @@ async login(
   const user = await this.authService.validateUser(body.email, body.password);
   const loginResult = await this.authService.login(user);
 
-const isProd = process.env.NODE_ENV === 'production';
+  const isProduction = process.env.NODE_ENV === 'production';
 
   // Set secure cookies
-res.cookie('access_token', loginResult.accessToken, {
-  httpOnly: true,
-  secure: isProd,           // ✅ Must be true if SameSite=None
-  sameSite: isProd ? 'none' : 'lax',
-  path: '/',
-  maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-});
-
-res.cookie('user', JSON.stringify(user), {
+  res.cookie('access_token', loginResult.accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // only secure in prod
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    path: '/',
+    maxAge: 1000 * 60 * 60 * 24 * 7, // ✅ 7 days
+  });
+  res.cookie('user', JSON.stringify({
+  email: user.email,
+  firstname: user.firstname,
+  lastname: user.lastname,
+  type: user.type,
+  _id: user._id,
+}), {
   httpOnly: false,
-  secure: isProd,
-  sameSite: isProd ? 'none' : 'lax',
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
   path: '/',
-  maxAge: 1000 * 60 * 60 * 24 * 7,
+  maxAge: 1000 * 60 * 60 * 24 * 7, // ✅ 7 days
 });
 
 
@@ -174,12 +179,12 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
     });
 
     // Successful redirec
-    return res.redirect("http://localhost:55555/AppDashboard")
+    return res.redirect("https://talkbase.netlify.app/AppDashboard")
     
   } catch (error) {
     console.error('Google auth callback error:', error);
     // Fallback redirect if something fails
-    return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:55555'}/sign-up`);
+    return res.redirect(`${process.env.FRONTEND_URL || 'https://talkbase.netlify.app'}/sign-up`);
   }
 }
 }
