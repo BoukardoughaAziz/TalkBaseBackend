@@ -53,30 +53,26 @@ async login(
   const isProduction = process.env.NODE_ENV === 'production';
 
   // Set secure cookies
-// In your login method
-    res.cookie('access_token', loginResult.accessToken, {
-      httpOnly: true,
-      secure: true, // Always true for production
-      sameSite: 'none', // Required for cross-origin
-      path: '/',
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-      domain: process.env.NODE_ENV === 'production' ? '.yourdomain.com' : undefined, // Replace with your actual domain
-    });
-
-    res.cookie('user', JSON.stringify({
-      email: user.email,
-      firstname: user.firstname,
-      lastname: user.lastname,
-      type: user.type,
-      _id: user._id,
-    }), {
-      httpOnly: false,
-      secure: true,
-      sameSite: 'none',
-      path: '/',
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-      domain: process.env.NODE_ENV === 'production' ? '.yourdomain.com' : undefined,
-    });
+  res.cookie('access_token', loginResult.accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // only secure in prod
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    path: '/',
+    maxAge: 1000 * 60 * 60 * 24 * 7, // ✅ 7 days
+  });
+  res.cookie('user', JSON.stringify({
+  email: user.email,
+  firstname: user.firstname,
+  lastname: user.lastname,
+  type: user.type,
+  _id: user._id,
+}), {
+  httpOnly: false,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  path: '/',
+  maxAge: 1000 * 60 * 60 * 24 * 7, // ✅ 7 days
+});
 
 
   return { 
@@ -159,14 +155,12 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
     const loginResult = await this.authService.login(user);
 
     // Set cookies
-    // Set cookies with proper cross-origin settings
     res.cookie('access_token', loginResult.accessToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none', // Changed from 'lax' to 'none'
+      secure: process.env.NODE_ENV === 'production', // Secure in production
+      sameSite: 'lax',
       maxAge: 1000 * 60 * 60 * 24 * 7,
-      path: '/',
-      domain: process.env.NODE_ENV === 'production' ? '.yourdomain.com' : undefined,
+      path: '/', // Important for cross-route access
     });
 
     res.cookie('user', JSON.stringify({
@@ -175,22 +169,15 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
       lastname: user.lastname,
       type: user.type,
       _id: user._id,
-      emailVerified: true
+      emailVerified:true
     }), {
       httpOnly: false,
-      secure: true,
-      sameSite: 'none', // Changed from 'lax' to 'none'
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       maxAge: 1000 * 60 * 60 * 24 * 7,
       path: '/',
-      domain: process.env.NODE_ENV === 'production' ? '.yourdomain.com' : undefined,
     });
 
-// Redirect to your deployed frontend, not localhost
-const frontendUrl = process.env.NODE_ENV === 'production' 
-  ? 'https://talkbase.netlify.app' 
-  : 'http://localhost:55555';
-
-return res.redirect(`${frontendUrl}/AppDashboard`);
     // Successful redirec
     return res.redirect("https://talkbase.netlify.app/AppDashboard")
     
