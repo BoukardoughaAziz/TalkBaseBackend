@@ -187,7 +187,7 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
 
 // Redirect to your deployed frontend, not localhost
 const frontendUrl = process.env.NODE_ENV === 'production' 
-  ? 'https://your-netlify-app.netlify.app' 
+  ? 'https://talkbase.netlify.app' 
   : 'http://localhost:55555';
 
 return res.redirect(`${frontendUrl}/AppDashboard`);
