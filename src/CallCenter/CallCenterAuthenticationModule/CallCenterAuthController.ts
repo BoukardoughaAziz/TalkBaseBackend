@@ -50,7 +50,7 @@ async login(
   const user = await this.authService.validateUser(body.email, body.password);
   const loginResult = await this.authService.login(user);
 
-  const isProduction = process.env.NODE_ENV === 'production';
+const isProd = process.env.NODE_ENV === 'production';
 
   // Set secure cookies
 res.cookie('access_token', loginResult.accessToken, {
