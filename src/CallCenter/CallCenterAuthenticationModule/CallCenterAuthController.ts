@@ -158,7 +158,7 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
     res.cookie('access_token', loginResult.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // Secure in production
-      sameSite: 'lax',
+      sameSite: 'none', // Changed from 'lax',
       maxAge: 1000 * 60 * 60 * 24 * 7,
       path: '/', // Important for cross-route access
     });
@@ -173,7 +173,7 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
     }), {
       httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: 'none', // Changed from 'lax',
       maxAge: 1000 * 60 * 60 * 24 * 7,
       path: '/',
     });
