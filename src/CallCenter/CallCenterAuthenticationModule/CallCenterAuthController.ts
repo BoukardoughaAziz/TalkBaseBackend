@@ -180,7 +180,18 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
     });
 
     // Successful redirec
-    return res.redirect("http://localhost:55555/AppDashboard")
+      const frontendUrl = "http://localhost:55555/AppDashboard";
+      const params = new URLSearchParams({
+        token: loginResult.accessToken,
+        email: user.email,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        type: user.type,
+        id: user._id,
+      }).toString();
+
+      return res.redirect(`${frontendUrl}?${params}`);
+
     
   } catch (error) {
     console.error('Google auth callback error:', error);

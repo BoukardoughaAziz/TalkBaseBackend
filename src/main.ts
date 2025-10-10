@@ -6,7 +6,7 @@ import * as cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // ✅ Allowed origins (frontend URLs)
+  // Get allowed origins from environment or use defaults
   const allowedOrigins = process.env.ALLOWED_ORIGINS 
     ? process.env.ALLOWED_ORIGINS.split(',')
     : [
@@ -18,48 +18,34 @@ async function bootstrap() {
         'https://68e21c8de7ed3887b7dacdc1--talkbase.netlify.app',
         'https://talkbase.netlify.app',
         'https://talkbasee.netlify.app',
-        'https://talkbasefrontoffice-yrcs.onrender.com'
+        'https://talkbasefrontoffice-yrcs.onrender.com/'
+        // Add your Render backend URL if frontend needs to call it
       ];
 
-  // ✅ Proper CORS configuration for cookie-based authentication
   const corsOptions: CorsOptions = {
     origin: (origin, callback) => {
-      // Allow requests with no origin (like Postman or mobile)
+      // Allow requests with no origin (like mobile apps, Postman, etc.)
       if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
+      
+      if (allowedOrigins.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
-        console.warn('❌ Blocked by CORS:', origin);
+        console.log('Blocked by CORS:', origin);
         callback(new Error('Not allowed by CORS'));
       }
     },
-    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
-    credentials: true, // ✅ This is CRUCIAL for cookies
-    allowedHeaders: [
-      'Content-Type',
-      'Authorization',
-      'X-Requested-With',
-      'Accept',
-      'Origin',
-    ],
-    exposedHeaders: ['set-cookie'], // ✅ Allow browser to handle cookies properly
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,  // true =>> Allow cookies to be sent
     optionsSuccessStatus: 204,
+    allowedHeaders: ['Content-Type', 'Authorization'],
   };
 
-  // ✅ Global prefix (keep it if needed)
   app.setGlobalPrefix('NwidgetBackend');
-
-  // ✅ Enable CORS before cookie parser
   app.enableCors(corsOptions);
-
-  // ✅ Parse cookies on incoming requests
   app.use(cookieParser());
 
-  // ✅ Listen on all network interfaces (for Render)
-  await app.listen(process.env.PORT || 15000, '0.0.0.0');
-
-  console.log(`🚀 Application is running on: ${await app.getUrl()}`);
+  await app.listen(15000, '0.0.0.0');
+  console.log(`Application is running on: ${await app.getUrl()}`);
 }
 
 bootstrap();
