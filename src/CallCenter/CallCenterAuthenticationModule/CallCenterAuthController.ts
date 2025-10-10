@@ -158,10 +158,11 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
  // Set cookies
     res.cookie('access_token', loginResult.accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // Secure in production
-      sameSite: 'none', // Changed from 'lax',
+      secure: true,
+      sameSite: 'none',  // Required for cross-site cookies
+      domain: '.netlify.app',  // <-- Key: must match your frontend domain
       maxAge: 1000 * 60 * 60 * 24 * 7,
-      path: '/', // Important for cross-route access
+      path: '/',
     });
 
     res.cookie('user', JSON.stringify({
@@ -172,9 +173,10 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
       _id: user._id,
       emailVerified:true
     }), {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none', // Changed from 'lax',
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',  // Required for cross-site cookies
+      domain: '.netlify.app',  // <-- Key: must match your frontend domain
       maxAge: 1000 * 60 * 60 * 24 * 7,
       path: '/',
     });
