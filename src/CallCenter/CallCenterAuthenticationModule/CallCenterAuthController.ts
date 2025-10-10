@@ -157,8 +157,8 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
     // Set cookies
     res.cookie('access_token', loginResult.accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // only secure in prod
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        sameSite: 'none',
+        secure: true,
         path: '/',
         maxAge: 1000 * 60 * 60 * 24 * 7, // ✅ 7 days
       });
@@ -170,8 +170,8 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
       _id: user._id,
     }), {
       httpOnly: false,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      sameSite: 'none',
+      secure: true,
       path: '/',
       maxAge: 1000 * 60 * 60 * 24 * 7, // ✅ 7 days
     });
@@ -186,4 +186,15 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
     return res.redirect(`${process.env.FRONTEND_URL || 'https://talkbasee.netlify.app'}/sign-up`);
   }
 }
+
+
+
+
+@Get('auth/me')
+getUser(@Req() req) {
+  const userCookie = req.cookies['user'];
+  if (!userCookie) throw new UnauthorizedException('No user cookie');
+  return JSON.parse(userCookie);
+}
+
 }
