@@ -181,7 +181,6 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
     // Successful redirect
     return {
       redirect: "https://talkbasee.netlify.app/AppDashboard",
-      message: 'Login successful',
       user: {
         email: user.email,
         firstname: user.firstname,
