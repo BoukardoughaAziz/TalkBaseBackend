@@ -54,11 +54,11 @@ async login(
 
   // Set secure cookies
   res.cookie('access_token', loginResult.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // Secure in production
-      sameSite: 'none', // Changed from 'lax',
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-      path: '/', // Important for cross-route access
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // only secure in prod
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    path: '/',
+    maxAge: 1000 * 60 * 60 * 24 * 7, // ✅ 7 days
   });
   res.cookie('user', JSON.stringify({
   email: user.email,
@@ -67,11 +67,11 @@ async login(
   type: user.type,
   _id: user._id,
 }), {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none', // Changed from 'lax',
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-      path: '/',
+  httpOnly: false,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  path: '/',
+  maxAge: 1000 * 60 * 60 * 24 * 7, // ✅ 7 days
 });
 
 
@@ -158,11 +158,10 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
  // Set cookies
     res.cookie('access_token', loginResult.accessToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none',  // Required for cross-site cookies
-      domain: '.netlify.app',  // <-- Key: must match your frontend domain
+      secure: process.env.NODE_ENV === 'production', // Secure in production
+      sameSite: 'none', // Changed from 'lax',
       maxAge: 1000 * 60 * 60 * 24 * 7,
-      path: '/',
+      path: '/', // Important for cross-route access
     });
 
     res.cookie('user', JSON.stringify({
@@ -173,10 +172,9 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
       _id: user._id,
       emailVerified:true
     }), {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none',  // Required for cross-site cookies
-      domain: '.netlify.app',  // <-- Key: must match your frontend domain
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'none', // Changed from 'lax',
       maxAge: 1000 * 60 * 60 * 24 * 7,
       path: '/',
     });
@@ -184,7 +182,17 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
 
 
     // Successful redirect
-    return res.redirect("https://talkbasee.netlify.app/AppDashboard");
+    const token = loginResult.accessToken;
+    const userInfo = encodeURIComponent(JSON.stringify({
+      email: user.email,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      type: user.type,
+      _id: user._id,
+      emailVerified: true,
+    }));
+
+    return res.redirect(`https://talkbasee.netlify.app/AppDashboard?token=${token}&user=${userInfo}`);
   } catch (error) {
     console.error('Google auth callback error:', error);
     // Fallback redirect if something fails
