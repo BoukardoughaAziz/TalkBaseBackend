@@ -155,28 +155,25 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
     const loginResult = await this.authService.login(user);
 
     // Set cookies
- // Set cookies
     res.cookie('access_token', loginResult.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // Secure in production
-      sameSite: 'none', // Changed from 'lax',
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-      path: '/', // Important for cross-route access
-    });
-
-    res.cookie('user', JSON.stringify({
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // only secure in prod
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        path: '/',
+        maxAge: 1000 * 60 * 60 * 24 * 7, // ✅ 7 days
+      });
+      res.cookie('user', JSON.stringify({
       email: user.email,
       firstname: user.firstname,
       lastname: user.lastname,
       type: user.type,
       _id: user._id,
-      emailVerified:true
     }), {
       httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none', // Changed from 'lax',
-      maxAge: 1000 * 60 * 60 * 24 * 7,
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       path: '/',
+      maxAge: 1000 * 60 * 60 * 24 * 7, // ✅ 7 days
     });
 
 
@@ -189,14 +186,4 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
     return res.redirect(`${process.env.FRONTEND_URL || 'https://talkbasee.netlify.app'}/sign-up`);
   }
 }
-
-@Get('me')
-getProfile(@Req() req) {
-  const userCookie = req.cookies['user'];
-  if (!userCookie) {
-    throw new UnauthorizedException('No user cookie found');
-  }
-  return JSON.parse(userCookie);
-}
-
 }
