@@ -182,7 +182,7 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
 
 
     // Successful redirect
-    return res.redirect("https://talkbase.netlify.app/AppDashboard");
+    return res.redirect("https://talkbasee.netlify.app/AppDashboard");
   } catch (error) {
     console.error('Google auth callback error:', error);
     // Fallback redirect if something fails
