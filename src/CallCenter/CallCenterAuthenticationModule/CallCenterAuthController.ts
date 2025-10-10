@@ -179,12 +179,12 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
     });
 
     // Successful redirec
-    return res.redirect("https://talkbasefrontoffice-yrcs.onrender.com/AppDashboard")
+    return res.redirect("https://talkbasee.netlify.app/AppDashboard")
     
   } catch (error) {
     console.error('Google auth callback error:', error);
     // Fallback redirect if something fails
-    return res.redirect(`${process.env.FRONTEND_URL || 'https://talkbasefrontoffice-yrcs.onrender.com/'}/sign-up`);
+    return res.redirect(`${process.env.FRONTEND_URL || 'https://talkbasee.netlify.app'}/sign-up`);
   }
 }
 }
