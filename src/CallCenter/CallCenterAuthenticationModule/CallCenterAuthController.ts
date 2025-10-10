@@ -182,21 +182,21 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
 
 
     // Successful redirect
-    const token = loginResult.accessToken;
-    const userInfo = encodeURIComponent(JSON.stringify({
-      email: user.email,
-      firstname: user.firstname,
-      lastname: user.lastname,
-      type: user.type,
-      _id: user._id,
-      emailVerified: true,
-    }));
-
-    return res.redirect(`https://talkbasee.netlify.app/AppDashboard?token=${token}&user=${userInfo}`);
+    return res.redirect("https://talkbasee.netlify.app/AppDashboard");
   } catch (error) {
     console.error('Google auth callback error:', error);
     // Fallback redirect if something fails
     return res.redirect(`${process.env.FRONTEND_URL || 'https://talkbasee.netlify.app'}/sign-up`);
   }
 }
+
+@Get('me')
+getProfile(@Req() req) {
+  const userCookie = req.cookies['user'];
+  if (!userCookie) {
+    throw new UnauthorizedException('No user cookie found');
+  }
+  return JSON.parse(userCookie);
+}
+
 }
