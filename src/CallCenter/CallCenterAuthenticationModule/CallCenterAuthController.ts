@@ -172,7 +172,7 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
       _id: user._id,
       emailVerified:true
     }), {
-      httpOnly: false,
+      httpOnly: true,
       secure: true, // Secure in production
       sameSite: 'none', // Changed from 'lax',
       maxAge: 1000 * 60 * 60 * 24 * 7,
