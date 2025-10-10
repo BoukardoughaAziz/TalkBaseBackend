@@ -128,16 +128,18 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
 
     const { email, firstName, lastName } = req.user;
     
-    // Your existing user lookup/creation logic...
+    // Check if user exists or create new one
     let user;
     try {
       user = await this.authService.finduserbyemail(email);
+      // If user exists, ensure emailVerified is set to true for OAuth users
       if (!user.emailVerified) {
         await this.authService.updateemailVerificationStatus(user._id, true);
         user.emailVerified = true;
       }
     } catch (e) {
-      const randomPassword = Math.random().toString(36).slice(-8) + 'A1!';
+      // User doesn't exist, create new one
+      const randomPassword = Math.random().toString(36).slice(-8) + 'A1!'; 
       user = await this.authService.register(
         email,
         randomPassword,
@@ -145,31 +147,43 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
         lastName,
         AgentType.AGENT,
       );
+      // Set emailVerified to true for OAuth registered users
       await this.authService.updateemailVerificationStatus(user._id, true);
       user.emailVerified = true;
     }
 
     const loginResult = await this.authService.login(user);
 
-    // Encode user data
-    const userData = encodeURIComponent(JSON.stringify({
+    // Set cookies
+    res.cookie('access_token', loginResult.accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // only secure in prod
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        path: '/',
+        maxAge: 1000 * 60 * 60 * 24 * 7, // ✅ 7 days
+      });
+      res.cookie('user', JSON.stringify({
       email: user.email,
       firstname: user.firstname,
       lastname: user.lastname,
       type: user.type,
       _id: user._id,
-      emailVerified: true
-    }));
+    }), {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      path: '/',
+      maxAge: 1000 * 60 * 60 * 24 * 7, // ✅ 7 days
+    });
 
-    // Redirect with tokens in URL
-    return res.redirect(
-      `https://talkbasee.netlify.app/auth/callback?token=${loginResult.accessToken}&user=${userData}`
-    );
+
+
+    // Successful redirect
+    return res.redirect("https://talkbasee.netlify.app/AppDashboard");
   } catch (error) {
     console.error('Google auth callback error:', error);
-    return res.redirect(
-      `https://talkbasee.netlify.app/sign-up?error=auth_failed`
-    );
+    // Fallback redirect if something fails
+    return res.redirect(`${process.env.FRONTEND_URL || 'https://talkbasee.netlify.app'}/sign-up`);
   }
 }
 }
