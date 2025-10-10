@@ -156,45 +156,36 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
 
     // Set cookies
     res.cookie('access_token', loginResult.accessToken, {
-        httpOnly: true,
-        sameSite: 'none',
-        secure: true,
-        path: '/',
-        maxAge: 1000 * 60 * 60 * 24 * 7, // ✅ 7 days
-      });
-      res.cookie('user', JSON.stringify({
+      httpOnly: true,
+      secure: true, // ✅ must be true when frontend is on https
+      sameSite: 'none', // ✅ MUST be 'none' for cross-site cookies
+      path: '/',
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    });
+
+
+    res.cookie('user', JSON.stringify({
       email: user.email,
       firstname: user.firstname,
       lastname: user.lastname,
       type: user.type,
       _id: user._id,
+      emailVerified:true
     }), {
       httpOnly: false,
-      sameSite: 'none',
-      secure: true,
+      secure: true, // Secure in production
+      sameSite: 'none', // Changed from 'lax',
+      maxAge: 1000 * 60 * 60 * 24 * 7,
       path: '/',
-      maxAge: 1000 * 60 * 60 * 24 * 7, // ✅ 7 days
     });
 
-
-
-    // Successful redirect
-    return res.redirect("https://talkbasee.netlify.app/AppDashboard");
+    // Successful redirec
+    return res.redirect("http://localhost:55555/AppDashboard")
+    
   } catch (error) {
     console.error('Google auth callback error:', error);
     // Fallback redirect if something fails
-    return res.redirect(`${process.env.FRONTEND_URL || 'https://talkbasee.netlify.app'}/sign-up`);
+    return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:55555'}/sign-up`);
   }
 }
-
-
-
-
-@Get('auth/me')
-getUser(@Req() req) {
-  const userCookie = req.cookies['user'];
-  if (!userCookie) throw new UnauthorizedException('No user cookie');
-  return JSON.parse(userCookie);
-}
-
 }
