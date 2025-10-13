@@ -180,7 +180,7 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
     });
 
     // Successful redirec
-      const frontendUrl = "http://localhost:55555/AppDashboard";
+      const frontendUrl = "https://talkbasee.netlify.app/AppDashboard";
       const params = new URLSearchParams({
         token: loginResult.accessToken,
         email: user.email,
@@ -196,7 +196,7 @@ async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
   } catch (error) {
     console.error('Google auth callback error:', error);
     // Fallback redirect if something fails
-    return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:55555'}/sign-up`);
+    return res.redirect(`${process.env.FRONTEND_URL || 'https://talkbasee.netlify.app'}/sign-up`);
   }
 }
 }
