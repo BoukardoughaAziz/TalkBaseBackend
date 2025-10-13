@@ -18,7 +18,8 @@ async function bootstrap() {
         'https://68e21c8de7ed3887b7dacdc1--talkbase.netlify.app',
         'https://talkbase.netlify.app',
         'https://talkbasee.netlify.app',
-        'https://talkbasefrontoffice-yrcs.onrender.com/'
+        'https://talkbasefrontoffice-yrcs.onrender.com/',
+        'https://boisterous-sunshine-556e97.netlify.app/talkbase-widget.umd.js'
         // Add your Render backend URL if frontend needs to call it
       ];
 
