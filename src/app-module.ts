@@ -14,7 +14,8 @@ import {  BaseScoutModule } from './Chat/base-scout/base-scout.module';
   imports: [
     MongooseModule.forRoot('mongodb+srv://azizboukardougha:N4TMDDmbsefVd8fd@cluster0.ojgrhfb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'),//Nwidget?replicaSet=rs0
     CallCenterAuthModule,
-    ChatModule, LiveKitModule,StatModule, ClientInformationModule,ConversationModule,BaseBuddyModule,BaseScoutModule
+    ChatModule, LiveKitModule,StatModule, ClientInformationModule,ConversationModule,BaseBuddyModule,
+    BaseScoutModule
   ], 
   controllers: [], 
   providers: [],

@@ -135,6 +135,7 @@ When responding, always keep the user's context and product details in mind, and
       answer += chunk.text;
     }
     const appclient = await this.appClientModel.findOne({ humanIdentifier: ConversationId }).exec();
+    console.log("this is the appclient",appclient)
     const chatMessage : ChatMessage = new this.chatMessageModel({
       message: answer.trim(),
       chatEvent:ChatEvent.MessageFromBaseBuddyToClient,
@@ -146,7 +147,8 @@ When responding, always keep the user's context and product details in mind, and
     console.log("----------------------------------------------")
     console.log("----------------------------------------------")
     console.log("----------------------------------------------")
-    console.log("this is the appclient",appclient)
+    console.log("this is the conversationid", ConversationId);
+
 
     const conversation = await this.conversationModel.findOne({ AppClientID: chatMessage.appClient.humanIdentifier }).exec();
     if (!conversation) {

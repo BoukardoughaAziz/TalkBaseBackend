@@ -70,7 +70,8 @@ private appAgentModel: Model<AppAgentDocument>,
     console.log('\n-------------------------------------------------------------')
     console.log('-------------------------------------------------------------')
     console.log("add-message-client was called", chatMessage.message);
-    console.log("this is the chatMessage.conversationId", chatMessage.conversationId);
+    console.log("this is the chatMessage.appClient.appagentid", chatMessage.appClient);
+    console.log("this is the chatMessage", chatMessage);
     console.log('-------------------------------------------------------------')
     console.log('-------------------------------------------------------------\n')
     const conversation = await this.conversationModel.findOne({ AppClientID: chatMessage.conversationId }).exec();
@@ -108,51 +109,33 @@ private appAgentModel: Model<AppAgentDocument>,
     this.chatServiceClient.addMessageFromClientToAgent(incomingChatMessage);
     }
 
-  // @SubscribeMessage('messageFromClientToBaseBuddy')
-  //   messageFromClientToBaseBuddy(@MessageBody() data: ChatMessage) {
-  //     console.log("this is the data i've received",data)
-  //     console.log(`Received message: ${data.message}`);
-  //     this.server.emit('MESSAGE_FROM_BaseBuddy', data);
-  //   }
-
 
  // WebRTC Signaling Methods
 @SubscribeMessage('calluser')
 async handlecallUser(
-  @MessageBody() data: { 
-    conversationId: string; 
-    name: any;  
+  @MessageBody() data: {
+    userToCall: string  
     signalData: any;  
     from: any;
+    name: any;  
     to: any; 
-    userToCall: string 
+    calltype:boolean
   }
 ) {
   console.log("calluser has been called");
-  console.log("this is the user we're calling", data.userToCall);
 
   try {
     // Await the database query
     const agentToCall = await this.appAgentModel.findById(data.userToCall).exec();
     
-    if (!agentToCall) {
-      console.error(`Agent with ID ${data.userToCall} not found`);
-      // Optionally send an error back to the caller
-      return;
-    }
+    // if (!agentToCall) {
+    //   console.error(`Agent with ID ${data.userToCall} not found`);
+    //   // Optionally send an error back to the caller
+    //   return;
+    // }
 
-    console.log("this is the agent to call", agentToCall);
-    
-    // Check if the agent has a SocketId
-    if (!agentToCall.SocketId) {
-      console.error(`Agent ${data.userToCall} has no active socket connection`);
-      return;
-    }
-
-
-
+    console.log("this is the agent to call", agentToCall.SocketId);
     this.server.emit("callUser", { signal: data.signalData, from: data.from,to: agentToCall.SocketId, name: data.name })
-
     // Emit the call signal to the specific agent
     this.server.to(agentToCall.SocketId).emit("callUser", { 
       signal: data.signalData, 
@@ -169,9 +152,13 @@ async handlecallUser(
   
   @SubscribeMessage('answercall')
   handleanswerCall(
-  @MessageBody() data: { conversationId: string; name: any;  signal: any;  from: any, userToCall: string,to:string },
+  @MessageBody() data: {signal: any,to:string },
   ){
-    console.log("this is the whole data",data)
+    console.log("call accepted")
+    console.log("-------------------------------------------------")
+    console.log("this is the socketid that accepted the call",data.to)
+    console.log("signal",data.signal)
+    console.log("-------------------------------------------------")
 		this.server.emit("callaccepted",  data.signal)
   }
 

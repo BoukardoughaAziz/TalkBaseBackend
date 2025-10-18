@@ -79,6 +79,7 @@ export class ChatServiceClient {
 
 
 async StartConversation(AppClient: AppClient, UserDeviceInfo: UserDeviceInfo, isThisAnAiConversation: boolean): Promise<Conversation> {
+  console.log("this is the recived appclient", AppClient);
   let appclient = new this.appClientModel();
   let NewConversation = new this.conversationModel();
   let appagent = new this.AppAgent();
@@ -113,7 +114,7 @@ async StartConversation(AppClient: AppClient, UserDeviceInfo: UserDeviceInfo, is
 
   appclient.humanIdentifier = 'user_' + AppUtil.getRandomInt();
   appclient.identifier = uuidv4();
-  appclient.ipAddress = AppClient.ipAddress;
+  // appclient.ipAddress = AppClient.ipAddress;
   appclient.country = AppClient.country;
   appclient.associatedAgent = appagent; 
 

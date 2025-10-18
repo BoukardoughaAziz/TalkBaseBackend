@@ -49,6 +49,7 @@ async function bootstrap() {
         'https://shein.com',
         'https://www.primini.com',
         'https://primini.com',
+        'null'
 
       ];
 
