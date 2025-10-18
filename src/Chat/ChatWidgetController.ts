@@ -36,7 +36,7 @@ export class ChatWidgetController {
 
   @Post('StartConversation')
 async StartConversation(
-  @Body('appClient') AppClient: AppClient,
+  @Body('AppClient') AppClient: AppClient,
   @Body('UserDeviceInfo') UserDeviceInfo: UserDeviceInfo,
   @Body('isThisAnAiConversation') isThisAnAiConversation: boolean,
   @Req() req: Request
