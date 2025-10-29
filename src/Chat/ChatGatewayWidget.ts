@@ -164,6 +164,14 @@ async handlecallUser(
 
 
 
+    @SubscribeMessage('endcall')
+  handleEndCall(
+  @MessageBody() data: {},
+  ){
+  }
+
+
+
 @SubscribeMessage('StartConversation')
 async StartConversation(@MessageBody() data: {AppClient:AppClient,UserDeviceInfo:UserDeviceInfo, isThisAnAiConversation: boolean}) {
   let NewConversation: Conversation; 
@@ -189,6 +197,23 @@ async handleMarkConversationsHandledByHuman(
     return { status: 200, message: 'Conversation handed over to human' };
   } else {
     return { status: 404, message: 'Conversation not found or already handled by human' };
+  }
+}
+
+
+
+@SubscribeMessage('markConversationsHandledByBaseBuddy')
+async handleMarkConversationsHandledByBaseBuddy(
+  @MessageBody() data: { appClientId: string }
+) {
+  console.log("this is the received data ",data)
+  console.log("Marking conversation as handled by BaseBuddy for AppClientID:", data.appClientId);
+  const updated = await this.conversationService.markConversationsHandledByBaseBuddy(data.appClientId);
+  if (updated) {
+    this.server.emit('AConversationWillBeHandledByBaseBuddy', data.appClientId);
+    return { status: 200, message: 'Conversation handed over to BaseBuddy' };
+  } else {
+    return { status: 404, message: 'Conversation not found or already handled by BaseBuddy' };
   }
 }
 }

@@ -114,7 +114,7 @@ async StartConversation(AppClient: AppClient, UserDeviceInfo: UserDeviceInfo, is
 
   appclient.humanIdentifier = 'user_' + AppUtil.getRandomInt();
   appclient.identifier = uuidv4();
-  // appclient.ipAddress = AppClient.ipAddress;
+  appclient.ipAddress = AppClient.ipAddress;
   appclient.country = AppClient.country;
   appclient.associatedAgent = appagent; 
 

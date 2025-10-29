@@ -136,6 +136,20 @@ async markConversationsHandledByHuman(appClientId: string): Promise<{ status: nu
   return { status: 200, message: "Conversation was already handled by human" };
 }
 
+async markConversationsHandledByBaseBuddy(appClientId: string): Promise<{ status: number; message: string }> {
+  const conversation = await this.conversationModel.findOne({ AppClientID: appClientId }).exec();
 
+  if (!conversation) {
+    return { status: 404, message: "Conversation not found" };
+  }
+
+  if (!conversation.isHandledBy_BB) {
+    conversation.isHandledBy_BB = true;
+    await conversation.save();
+    return { status: 200, message: "Conversation handed back to BaseBuddy" };
+  }
+
+  return { status: 200, message: "Conversation was already handled by BaseBuddy" };
+}
 
 }
