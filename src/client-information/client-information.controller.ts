@@ -35,5 +35,8 @@ export class ClientInformationController {
   remove(@Param('id') id: string) {
     return this.clientInformationService.remove(id);
   }
+
+
+  
  
 }

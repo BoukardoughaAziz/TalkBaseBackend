@@ -12,10 +12,12 @@ import { CallCenterAuthService } from '../../sharedservices/CallCenterAuthServic
 import { AgentType } from '../../models/AppAgentSchema';
 import { Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
+import { MailerService } from 'src/sharedservices/MailServices';
 
 @Controller('CallCenterAuthController')
 export class CallCenterAuthController {
-  constructor(private readonly authService: CallCenterAuthService) {}
+  constructor(private readonly authService: CallCenterAuthService,    private readonly MailServices: MailerService
+) {}
 
   @Post('register')
   async register(
@@ -116,6 +118,27 @@ async login(
   @UseGuards(AuthGuard('google'))
   async googleAuth() {
     // Initiates the Google OAuth flow
+  }
+
+
+ @Post('send-marketing-email')
+  async sendMarketingEmail(
+    @Body() body: { subject: string; message: string; recipients:[string] },
+  ) {
+    const { subject, message, recipients } = body;
+
+    // if (!recipients || recipients.length() === 0) {
+    //   return { success: false, message: 'No recipients provided' };
+    // }
+
+    try {
+      // Call your service to send emails
+      await this.MailServices.sendMarketingEmail(recipients,subject, message, );
+      return { success: true, message: 'Marketing email sent successfully' };
+    } catch (error) {
+      console.error('Error sending marketing emails:', error);
+      return { success: false, message: 'Failed to send emails', error };
+    }
   }
 
 @Get('auth/google/callback')

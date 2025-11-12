@@ -208,4 +208,12 @@ export class CallCenterAuthService {
 }
 
 
+
+  async sendMarketingEmail(recipients: [string], subject: string, text: string, html: string) {
+  this.MailServices.sendMarketingEmail(recipients , subject,text,html);
+  }
+
+
+
+
 }
